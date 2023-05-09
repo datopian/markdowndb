@@ -1,5 +1,11 @@
 # @flowershow/markdowndb
 
+## 0.1.2
+
+### Patch Changes
+
+- Migrate to a separate repo (out of flowershow monorepo).
+
 ## 0.1.1
 
 ### Patch Changes
