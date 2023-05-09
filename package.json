@@ -15,7 +15,7 @@
     "prepare": "husky install",
     "changeset": "changeset",
     "release": "changeset version",
-    "postrelease": "npm run build && changeset publish"
+    "publish": "npm run build && changeset publish"
   },
   "repository": {
     "type": "git",
