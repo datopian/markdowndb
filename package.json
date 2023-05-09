@@ -1,5 +1,5 @@
 {
-  "name": "markdowndb",
+  "name": "@flowershow/markdowndb",
   "version": "0.1.2",
   "description": "Parse markdown files and store them in an SQL database.",
   "bin": {
@@ -12,18 +12,16 @@
     "lint:fix": "eslint --fix .",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "build": "tsc --p tsconfig.lib.json && cp package.json dist/package.json && cp README.md dist/README.md && cp LICENSE dist/LICENSE",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "changeset": "changeset",
+    "release": "changeset version",
+    "postrelease": "npm run build && changeset publish"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/datopian/markdowndb.git"
   },
-  "keywords": [
-    "markdown",
-    "database",
-    "content",
-    "obsidian"
-  ],
+  "keywords": ["markdown", "database", "content", "obsidian"],
   "author": "Rufus Pollock",
   "license": "MIT",
   "bugs": {
