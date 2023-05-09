@@ -11,11 +11,11 @@
     "lint:check": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "build": "tsc --p tsconfig.lib.json && cp package.json dist/package.json && cp README.md dist/README.md && cp LICENSE dist/LICENSE",
+    "build": "tsc --p tsconfig.lib.json",
+    "postbuild": "cp package.json dist/package.json && cp README.md dist/README.md && cp LICENSE dist/LICENSE && cd dist && npm pkg delete scripts.prepare",
     "prepare": "husky install",
     "changeset": "changeset",
-    "release": "changeset version",
-    "publish": "npm run build && changeset publish"
+    "release": "changeset version"
   },
   "repository": {
     "type": "git",
