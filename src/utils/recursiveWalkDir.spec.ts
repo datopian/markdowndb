@@ -1,7 +1,7 @@
 import { recursiveWalkDir } from "./recursiveWalkDir";
 
 describe("recursiveWalkDir", () => {
-  const contentFixturePath = "packages/markdowndb/__mocks__/content/blog";
+  const contentFixturePath = "__mocks__/content/blog";
   /*
    * To get all the file paths in the content fixture, run the following command in the terminal:
    * find <contentFicturePath> -type f

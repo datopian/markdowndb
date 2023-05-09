@@ -9,7 +9,7 @@ import { recursiveWalkDir } from "../utils";
 
 // TODO test index files
 describe("MarkdownDB", () => {
-  const pathToContentFixture = "packages/markdowndb/__mocks__/content";
+  const pathToContentFixture = "__mocks__/content";
   let mddb: MarkdownDB;
 
   beforeAll(async () => {

@@ -2,15 +2,16 @@ import type { JestConfigWithTsJest } from "ts-jest";
 
 const jestConfig: JestConfigWithTsJest = {
   displayName: "markdowndb",
-  preset: "../../jest.preset.js",
   testEnvironment: "node",
-  transform: {
-    "^.+\\.[tj]s?$": "ts-jest",
-  },
-  transformIgnorePatterns: ["<rootDir>/node_modules/(?!remark-parse)"],
-  moduleFileExtensions: ["ts", "js"],
+  extensionsToTreatAsEsm: [".ts"],
   moduleNameMapper: {
     "(.+)\\.js$": "$1",
+  },
+  transform: {
+    "^.+\\.ts?$": [
+      "ts-jest",
+      { useESM: true, tsconfig: "<rootDir>/tsconfig.spec.json" },
+    ],
   },
 };
 
