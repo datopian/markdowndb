@@ -15,14 +15,12 @@ import {
   MddbLink,
 } from "./schema.js";
 
-// TODO this should be in sync with paths created by remark-wiki-link
-const sluggifyFilePath = (str: string) => {
-  const url = str
-    .replace(/\s+/g, "-")
-    .replace(/\.\w+$/, "")
-    .replace(/(\/)?index$/, "")
-    .toLowerCase();
-  return url.length > 0 ? url : "/";
+const defaultFilePathToUrl = (filePath: string) => {
+  const permalink = filePath
+    .replace(/\.(mdx|md)/, "")
+    .replace(/\\/g, "/") // replace windows backslash with forward slash
+    .replace(/(\/)?index$/, ""); // remove index from the end of the permalink
+  return permalink.length > 0 ? permalink : "/"; // for home page
 };
 
 const resolveLinkToUrlPath = (link: string, sourceFilePath?: string) => {
@@ -55,9 +53,11 @@ export class MarkdownDB {
     folderPath,
     // TODO support glob patterns
     ignorePatterns = [],
+    pathToUrlResolver = defaultFilePathToUrl,
   }: {
     folderPath: string;
     ignorePatterns?: RegExp[];
+    pathToUrlResolver?: (filePath: string) => string;
   }) {
     //  Temporary, we don't want to handle updates now
     //  so database is refreshed every time the folder
@@ -123,7 +123,7 @@ export class MarkdownDB {
 
       // url_path
       const pathRelativeToFolder = path.relative(folderPath, filePath);
-      const urlPath = sluggifyFilePath(pathRelativeToFolder);
+      const urlPath = pathToUrlResolver(pathRelativeToFolder);
 
       // metadata, tags, links
       const source: string = fs.readFileSync(filePath, {
