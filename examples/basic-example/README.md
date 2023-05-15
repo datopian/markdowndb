@@ -9,15 +9,18 @@ First, let's create a markdown file for each project. You can use real project d
 ```bash
 mkdir projects
 cd projects
-touch portaljs.md flowershow.md datapipes.md giftless.md data-cli.md aircan.md
+touch markdowndb.md portaljs.md flowershow.md datapipes.md giftless.md data-cli.md
 ```
 
 In each file we'll write some short info about a given project, like so:
 
 ```md
-# What is Portal.JS
+# What is MarkdownDB
 
-🌀 Portal.JS is a framework for rapidly building rich data portal frontends using a modern frontend approach. Portal.JS can be used to present a single dataset or build a full-scale data catalog/portal.
+MarkdownDB is a javascript library for treating markdown files as a database -- as a "MarkdownDB". Specifically, it:
+
+- Parses your markdown files to extract structured data (frontmatter, tags etc) and creates an index in a local SQLite database
+- Provides a lightweight javascript API for querying the database and importing files into your application
 ```
 
 ## Step 2: Index markdown files into SQLite database
@@ -35,7 +38,7 @@ The above command will output a `markdown.db` file in the directory where it was
 .
 ├── markdown.db
 └── projects
-    ├── aircan.md
+    ├── data-cli.md
     ├── ...
     └── portaljs.md
 ```
@@ -50,7 +53,7 @@ Now, let's explore the database. We can do it with any SQLite viewer, e.g. https
 
 In our case, the `files` table will look like this:
 
-![](sqlite_viewer.png)
+![[sqlite-viewer.png]]
 
 You can also explore the database from the command line, e.g.:
 
@@ -66,11 +69,11 @@ SELECT * FROM files;
 
 Which will output:
 ```bash
-d8bd91a7663d721e8ef4c3abe6d706c7dc903fa0|projects/aircan.md|md|aircan||{}
 27ce406aac24e59af7a9f3c0c0a437c1d024152b|projects/data-cli.md|md|data-cli||{}
 26b1b0b06a4f450646f9e22fc18ec069bf577d8c|projects/datapipes.md|md|datapipes||{}
 dafdd0daf71a1b06db1988c57848dc36947375f4|projects/flowershow.md|md|flowershow||{}
 32c8db33fb8758516bfefb6ab1f22d03b1e53a08|projects/giftless.md|md|giftless||{}
+7e01cae193f12f5a4a9be2b89f22b429761bd313|projects/markdowndb.md|md|markdowndb||{}
 5445349c6822704d6f531a83c2aca2e4f90de864|projects/portaljs.md|md|portaljs||{}
 
 ```
@@ -133,10 +136,10 @@ It should output the JSON with all our projects.
 ```json
 [
   {
-    "_id": "26b1b0b06a4f450646f9e22fc18ec069bf577d8c",
-    "file_path": "projects/datapipes.md",
+    "_id": "7e01cae193f12f5a4a9be2b89f22b429761bd313",
+    "file_path": "projects/markdowndb.md",
     "extension": "md",
-    "url_path": "datapipes",
+    "url_path": "markdowndb",
     "filetype": null,
     "metadata": {}
   },
@@ -150,10 +153,10 @@ Now, let's add some metadata to our project files. We'll use frontmatter for tha
 
 ```md
 ---
-name: portaljs
-description: Rapidly build rich data portals using a modern frontend framework.
-stars: 2000
-forks: 317
+name: markdowndb
+description: Javascript library for treating markdown files as a database.
+stars: 6
+forks: 0
 ---
 ```
 
@@ -168,15 +171,15 @@ Now, if we run our script again, we'll see that the `metadata` field in the outp
 ```json
 [
   {
-    "_id": "26b1b0b06a4f450646f9e22fc18ec069bf577d8c",
-    "file_path": "projects/portaljs.md",
+    "_id": "7e01cae193f12f5a4a9be2b89f22b429761bd313",
+    "file_path": "projects/markdowndb.md",
     "extension": "md",
-    "url_path": "portaljs",
+    "url_path": "markdowndb",
     "metadata": {
-      "name": "portaljs",
-      "description": "🌀 Rapidly build rich data portals using a modern frontend framework.",
-      "stars": 2000,
-      "forks": 317
+      "name": "markdowndb",
+      "description": "Javascript library for treating markdown files as a database",
+      "stars": 6,
+      "forks": 0
     }
   },
   ...
@@ -238,7 +241,7 @@ process.exit(0);
 
 The above script will output the following to the terminal:
 
-![](result.png)
+![[output.png]]
 
 ## Done!
 
