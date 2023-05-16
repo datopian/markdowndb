@@ -1,5 +1,11 @@
 # @flowershow/markdowndb
 
+## 0.1.4
+
+### Patch Changes
+
+- 3aad734: Adjust default path->url resolver function and allow passing custom one.
+
 ## 0.1.3
 
 ### Patch Changes
