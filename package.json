@@ -10,6 +10,7 @@
     "format:write": "prettier --write \"**/*.{js,ts}\"",
     "lint:check": "eslint .",
     "lint:fix": "eslint --fix .",
+    "pretest": "npm run build && ./dist/src/bin/index.js ./__mocks__/content",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "build": "tsc --p tsconfig.lib.json",
     "postbuild": "cp package.json dist/package.json && cp README.md dist/README.md && cp LICENSE dist/LICENSE && cd dist && npm pkg delete scripts.prepare",
