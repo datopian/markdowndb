@@ -16,11 +16,12 @@ import {
 } from "./schema.js";
 
 const defaultFilePathToUrl = (filePath: string) => {
-  const permalink = filePath
+  let url = filePath
     .replace(/\.(mdx|md)/, "")
     .replace(/\\/g, "/") // replace windows backslash with forward slash
     .replace(/(\/)?index$/, ""); // remove index from the end of the permalink
-  return permalink.length > 0 ? permalink : "/"; // for home page
+  url = url.length > 0 ? url : "/"; // for home page
+  return encodeURI(url);
 };
 
 const resolveLinkToUrlPath = (link: string, sourceFilePath?: string) => {
@@ -193,7 +194,10 @@ export class MarkdownDB {
   }
 
   async getFileByUrl(url: string): Promise<MddbFile | null> {
-    const file = await this.db.from("files").where("url_path", url).first();
+    const file = await this.db
+      .from("files")
+      .where("url_path", encodeURI(url))
+      .first();
     return new MddbFile(file);
   }
 
