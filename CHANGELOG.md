@@ -1,5 +1,11 @@
 # @flowershow/markdowndb
 
+## 0.1.5
+
+### Patch Changes
+
+- 41c75f7: Encode URL's stored in the database.
+
 ## 0.1.4
 
 ### Patch Changes
