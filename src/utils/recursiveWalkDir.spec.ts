@@ -8,6 +8,7 @@ describe("recursiveWalkDir", () => {
    * watch out for double slashes in the output
    * */
   const contentFixtureFilePaths = [
+    `${contentFixturePath}/Some Blog 4.md`,
     `${contentFixturePath}/blog3.mdx`,
     `${contentFixturePath}/blog2.mdx`,
     `${contentFixturePath}/blog1.mdx`,

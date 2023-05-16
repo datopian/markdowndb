@@ -8,7 +8,7 @@ import { recursiveWalkDir } from "../utils";
  */
 
 // TODO test index files
-describe("MarkdownDB", () => {
+describe("MarkdownDB - default config", () => {
   const pathToContentFixture = "__mocks__/content";
   let mddb: MarkdownDB;
 
@@ -44,17 +44,24 @@ describe("MarkdownDB", () => {
       const allIndexedFiles = await mddb.getFiles();
       expect(allIndexedFiles).toHaveLength(allFiles.length);
     });
+
+    test("correctly converts file paths to urls (default convereter function)", async () => {
+      const dbFile1 = await mddb.getFileByUrl("blog/Some Blog 4");
+      expect(dbFile1).not.toBeNull();
+
+      const dbFile2 = await mddb.getFileByUrl("blog/blog2");
+      expect(dbFile2).not.toBeNull();
+    });
   });
 
   describe("querying files", () => {
     test("can get all files", async () => {
       const dbFiles = await mddb.getFiles();
-      const dbFilesPaths = dbFiles.map((f) => f.file_path);
       const allFilesPaths = recursiveWalkDir(pathToContentFixture);
 
       expect(dbFiles).toHaveLength(allFilesPaths.length);
-      dbFilesPaths.forEach((p) => {
-        expect(allFilesPaths).toContain(p);
+      dbFiles.forEach((file) => {
+        expect(allFilesPaths).toContain(file.file_path);
       });
     });
 
@@ -217,6 +224,55 @@ describe("MarkdownDB", () => {
       ];
       // TODO fix types
       expect(() => MddbFile.batchInsert(mddb as any, files)).toThrow();
+    });
+  });
+});
+
+describe("MarkdownDB - custom config", () => {
+  const pathToContentFixture = "__mocks__/content";
+  let mddb: MarkdownDB;
+
+  beforeAll(async () => {
+    const dbConfig = {
+      client: "sqlite3",
+      connection: {
+        filename: "markdown.db",
+      },
+    };
+
+    mddb = new MarkdownDB(dbConfig);
+    await mddb.init();
+    await mddb.indexFolder({
+      folderPath: pathToContentFixture,
+      ignorePatterns: [/\/ignore\/.*/],
+      pathToUrlResolver: (path) =>
+        path
+          .replace(/\.mdx?$/, "")
+          .replace(/\s+/g, "-")
+          .toLowerCase(),
+    });
+  });
+
+  afterAll(async () => {
+    // TODO why we have to call this twice?
+    mddb.db.destroy();
+    mddb._destroyDb();
+  });
+
+  describe("correct startup and indexing", () => {
+    test("indexes all files in folder BUT ignored paths", async () => {
+      const allFiles = recursiveWalkDir(pathToContentFixture);
+      const allIndexedFilesCount = allFiles.length - 1; // ignore/ignore.md
+      const allIndexedFiles = await mddb.getFiles();
+      expect(allIndexedFiles).toHaveLength(allIndexedFilesCount);
+    });
+
+    test("correctly converts file paths to urls", async () => {
+      const dbFile1 = await mddb.getFileByUrl("blog/some-blog-4"); // note: the file name is "Some Blog 4.md"
+      expect(dbFile1).not.toBeNull();
+
+      const dbFile2 = await mddb.getFileByUrl("blog/blog2");
+      expect(dbFile2).not.toBeNull();
     });
   });
 });
