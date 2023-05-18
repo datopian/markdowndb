@@ -10,7 +10,7 @@
     "format:write": "prettier --write \"**/*.{js,ts}\"",
     "lint:check": "eslint .",
     "lint:fix": "eslint --fix .",
-    "pretest": "npm run build && ./dist/src/bin/index.js ./__mocks__/content",
+    "pretest": "npm run build && node ./dist/src/bin/index.js ./__mocks__/content",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "build": "tsc --p tsconfig.lib.json",
     "postbuild": "cp package.json dist/package.json && cp README.md dist/README.md && cp LICENSE dist/LICENSE && cd dist && npm pkg delete scripts.prepare",
@@ -22,12 +22,7 @@
     "type": "git",
     "url": "git+https://github.com/datopian/markdowndb.git"
   },
-  "keywords": [
-    "markdown",
-    "database",
-    "content",
-    "obsidian"
-  ],
+  "keywords": ["markdown", "database", "content", "obsidian"],
   "author": "Rufus Pollock",
   "license": "MIT",
   "bugs": {
