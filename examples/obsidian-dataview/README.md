@@ -189,4 +189,4 @@ Happy data cataloging!
 
 ---
 
-You can find the vault created in this tutorial [here](https://github.com/datopian/markdowndb/tree/main/examples/dataview).
+You can find the [vault created in this tutorial here](https://github.com/datopian/markdowndb/tree/main/examples/obsidian-dataview).
