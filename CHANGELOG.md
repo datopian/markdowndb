@@ -1,5 +1,11 @@
 # @flowershow/markdowndb
 
+## 0.1.6
+
+### Patch Changes
+
+- aed0b4b: Fix ignore regex pattern.
+
 ## 0.1.5
 
 ### Patch Changes

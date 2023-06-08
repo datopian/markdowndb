@@ -1,6 +1,6 @@
 {
   "name": "@flowershow/markdowndb",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Parse markdown files and store them in an SQL database.",
   "bin": {
     "mddb": "./src/bin/index.js"
@@ -22,7 +22,12 @@
     "type": "git",
     "url": "git+https://github.com/datopian/markdowndb.git"
   },
-  "keywords": ["markdown", "database", "content", "obsidian"],
+  "keywords": [
+    "markdown",
+    "database",
+    "content",
+    "obsidian"
+  ],
   "author": "Rufus Pollock",
   "license": "MIT",
   "bugs": {
