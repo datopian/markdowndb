@@ -4,7 +4,7 @@ import { MarkdownDB } from "../lib/markdowndb.js";
 
 // TODO get these from markdowndb.config.js or something
 const dbPath = "markdown.db";
-const ignorePatterns = [/Excalidraw/, /.obsidian/, /DS_Store/];
+const ignorePatterns = [/Excalidraw/, /\.obsidian/, /DS_Store/];
 const [contentPath] = process.argv.slice(2);
 
 if (!contentPath) {
