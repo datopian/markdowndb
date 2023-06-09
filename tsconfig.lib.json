@@ -12,6 +12,7 @@
     "types": ["node"]
   },
   "exclude": [
+    "./dist",
     "./examples",
     "jest.config.ts",
     "src/**/*.spec.ts",
