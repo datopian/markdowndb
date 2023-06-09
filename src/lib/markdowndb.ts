@@ -178,14 +178,44 @@ export class MarkdownDB {
       });
     });
 
-    await MddbFile.batchInsert(this.db, filesToInsert);
+    if (filesToInsert.length >= 500) {
+      for (let i = 0; i < filesToInsert.length; i += 500) {
+        await MddbFile.batchInsert(this.db, filesToInsert.slice(i, i + 500));
+      }
+    } else {
+      await MddbFile.batchInsert(this.db, filesToInsert);
+    }
 
     // TODO  what happens if some of the files were not inserted?
     // I guess inserting tags or links with such files used as foreign keys will fail too,
     // but need to check
-    await MddbTag.batchInsert(this.db, tagsToInsert);
-    await MddbFileTag.batchInsert(this.db, fileTagsToInsert);
-    await MddbLink.batchInsert(this.db, linksToInsert);
+
+    if (tagsToInsert.length >= 500) {
+      for (let i = 0; i < tagsToInsert.length; i += 500) {
+        await MddbTag.batchInsert(this.db, tagsToInsert.slice(i, i + 500));
+      }
+    } else {
+      await MddbTag.batchInsert(this.db, tagsToInsert);
+    }
+
+    if (fileTagsToInsert.length >= 500) {
+      for (let i = 0; i < fileTagsToInsert.length; i += 500) {
+        await MddbFileTag.batchInsert(
+          this.db,
+          fileTagsToInsert.slice(i, i + 500)
+        );
+      }
+    } else {
+      await MddbFileTag.batchInsert(this.db, fileTagsToInsert);
+    }
+
+    if (linksToInsert.length >= 500) {
+      for (let i = 0; i < linksToInsert.length; i += 500) {
+        await MddbLink.batchInsert(this.db, linksToInsert.slice(i, i + 500));
+      }
+    } else {
+      await MddbLink.batchInsert(this.db, linksToInsert);
+    }
   }
 
   async getFileById(id: string): Promise<MddbFile | null> {
