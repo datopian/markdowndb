@@ -1,5 +1,11 @@
 # @flowershow/markdowndb
 
+## 0.1.7
+
+### Patch Changes
+
+- 3129f4c: Fixed issue with indexing more than 500 files.
+
 ## 0.1.6
 
 ### Patch Changes
