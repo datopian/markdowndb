@@ -17,18 +17,14 @@
     "prepare": "husky install",
     "changeset": "changeset",
     "release": "changeset version",
+    "prepublish": "npm run build",
     "publish": "changeset publish"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/datopian/markdowndb.git"
   },
-  "keywords": [
-    "markdown",
-    "database",
-    "content",
-    "obsidian"
-  ],
+  "keywords": ["markdown", "database", "content", "obsidian"],
   "author": "Rufus Pollock",
   "license": "MIT",
   "bugs": {
