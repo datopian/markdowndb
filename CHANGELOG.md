@@ -1,5 +1,11 @@
 # @flowershow/markdowndb
 
+## 0.1.8
+
+### Patch Changes
+
+- Fix published package contents.
+
 ## 0.1.7
 
 ### Patch Changes
