@@ -16,7 +16,8 @@
     "postbuild": "cp package.json dist/package.json && cp README.md dist/README.md && cp LICENSE dist/LICENSE && cd dist && npm pkg delete scripts.prepare",
     "prepare": "husky install",
     "changeset": "changeset",
-    "release": "changeset version"
+    "release": "changeset version",
+    "publish": "changeset publish"
   },
   "repository": {
     "type": "git",
