@@ -1,6 +1,6 @@
 # MarkdownDB
 
-[![](https://badgen.net/npm/v/@flowershow/markdowndb)](https://www.npmjs.com/package/@flowershow/markdowndb)
+[![](https://badgen.net/npm/v/mddb)](https://www.npmjs.com/package/mddb)
 
 MarkdownDB is a javascript library for treating markdown files as a database -- as a "MarkdownDB". Specifically, it:
 
@@ -14,7 +14,7 @@ MarkdownDB is a javascript library for treating markdown files as a database -- 
 Install the MarkdownDB package in your Node.js project:
 
 ```sh
-npm i @flowershow/markdowndb
+npm i mddb
 ```
 
 And run the following command, passing the path to your markdown content folder as an argument.
@@ -28,7 +28,7 @@ npx mddb <path-to-your-content-folder>
 ...or, if you don't have a Node.js project and just want to index your content into an SQLite databse and handle the rest on your own:
 
 ```sh
-npx @flowershow/markdowndb <path-to-your-content>
+npx mddb <path-to-your-content>
 ```
 
 🎉 Done! You should see a new `markdown.db` file created in the directory where you ran the command.
@@ -54,7 +54,7 @@ Now, once the data is in the database, you can add the following script to your 
 
 ```
 // lib/mddb.ts
-import { MarkdownDB } from "@flowershow/markdowndb";
+import { MarkdownDB } from "mddb";
 
 const dbPath = "markdown.db";
 
