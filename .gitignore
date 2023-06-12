@@ -3,3 +3,4 @@ node_modules/
 dist/
 markdown.db
 *.tgz
+package-lock.json
