@@ -1,4 +1,4 @@
-import { MarkdownDB } from "@flowershow/markdowndb";
+import { MarkdownDB } from "mddb";
 import columnify from "columnify";
 
 const dbPath = "markdown.db";
