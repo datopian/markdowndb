@@ -1,9 +1,9 @@
 {
-  "name": "@flowershow/markdowndb",
-  "version": "0.1.8",
+  "name": "mddb",
+  "version": "0.1.9",
   "description": "Parse markdown files and store them in an SQL database.",
   "bin": {
-    "mddb": "./src/bin/index.js"
+    "mddb": "./dist/src/bin/index.js"
   },
   "scripts": {
     "format": "prettier --write \"**/*.{js,ts}\"",
@@ -12,8 +12,7 @@
     "pretest": "npm run build && node ./dist/src/bin/index.js ./__mocks__/content",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "build": "tsc --p tsconfig.lib.json",
-    "postbuild": "cp package.json dist/package.json && cp README.md dist/README.md && cp LICENSE dist/LICENSE && cd dist && npm pkg delete scripts.prepare",
-    "prepare": "husky install",
+    "postbuild": "cd dist && npm pkg delete scripts.prepare",
     "changeset": "changeset",
     "release": "changeset version",
     "prepublishOnly": "npm run build",
@@ -42,8 +41,8 @@
     "dist"
   ],
   "type": "module",
-  "main": "./src/index.js",
-  "types": "./src/index.d.ts",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "dependencies": {
     "@flowershow/remark-wiki-link": "^1.1.2",
     "gray-matter": "^4.0.3",

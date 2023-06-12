@@ -1,5 +1,11 @@
 # @flowershow/markdowndb
 
+## 0.1.9
+
+### Patch Changes
+
+- Package renamed from `@flowershow/markdowndb` to `mddb`.
+
 ## 0.1.8
 
 ### Patch Changes
