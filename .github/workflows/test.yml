@@ -8,6 +8,7 @@ on:
 
 jobs:
   main:
+    name: Test
     timeout-minutes: 15
     runs-on: ubuntu-latest
 
