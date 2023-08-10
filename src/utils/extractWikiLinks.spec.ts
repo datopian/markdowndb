@@ -35,11 +35,30 @@ describe("extractWikiLinks", () => {
     test("should extract wiki links", () => {
       const source = "[[Page 1]] [[Page 2]] [[Page 3]]";
       const expectedLinks = [
-        { linkType: "normal", linkSrc: "page-1" },
-        { linkType: "normal", linkSrc: "page-2" },
-        { linkType: "normal", linkSrc: "page-3" },
+        { linkType: "normal", linkSrc: "Page 1" },
+        { linkType: "normal", linkSrc: "Page 2" },
+        { linkType: "normal", linkSrc: "Page 3" },
       ];
       const links = extractWikiLinks(source);
+      expect(links).toHaveLength(expectedLinks.length);
+      links.forEach((link) => {
+        expect(expectedLinks).toContainEqual(link);
+      });
+    });
+
+    test("should extract wiki links with Obsidian-style shortest path", () => {
+      const source = "[[Page 1]] [[Page 2]] [[Page 3]]";
+      const expectedLinks = [
+        { linkType: "normal", linkSrc: "/some/folder/Page 1" },
+        { linkType: "normal", linkSrc: "/some/folder/Page 2" },
+        { linkType: "normal", linkSrc: "/some/folder/Page 3" },
+      ];
+      const permalinks = [
+        "/some/folder/Page 1",
+        "/some/folder/Page 2",
+        "/some/folder/Page 3",
+      ];
+      const links = extractWikiLinks(source, { permalinks });
       expect(links).toHaveLength(expectedLinks.length);
       links.forEach((link) => {
         expect(expectedLinks).toContainEqual(link);

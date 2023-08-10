@@ -132,7 +132,9 @@ export class MarkdownDB {
         flag: "r",
       });
 
-      const { metadata, links } = parseFile(source);
+      const { metadata, links } = parseFile(source, {
+        permalinks: filePathsToIndex,
+      });
       const filetype = metadata?.type || null;
 
       // TODO is there a better way to do this?
