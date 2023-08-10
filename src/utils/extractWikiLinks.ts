@@ -1,12 +1,13 @@
 import markdown from "remark-parse";
 import { unified, Plugin } from "unified";
 import { selectAll } from "unist-util-select";
-import remarkWikiLink from "@flowershow/remark-wiki-link";
+import remarkWikiLink from "@portaljs/remark-wiki-link";
 import gfm from "remark-gfm";
 
 export interface ExtractWikiLinksOptions {
   remarkPlugins?: Array<Plugin>; // remark plugins that add custom nodes to the AST
   extractors?: LinkExtractors; // mapping from custom node types (e.g. added by above plugins) to functions that should handle them
+  permalinks?: string[];
 }
 
 export interface LinkExtractors {
@@ -26,11 +27,6 @@ const extractWikiLinks = (
   const userExtractors: LinkExtractors = options?.extractors || {};
   const userRemarkPlugins: Array<Plugin> = options?.remarkPlugins || [];
 
-  const remarkPlugins = [
-    gfm,
-    remarkWikiLink, // adds wikiLink type nodes to AST
-    ...userRemarkPlugins,
-  ];
   const extractors: LinkExtractors = {
     link: (node: any) => ({
       linkSrc: node.url,
@@ -60,7 +56,14 @@ const extractWikiLinks = (
 
   const processor = unified()
     .use(markdown)
-    .use([gfm, ...remarkPlugins]);
+    .use([
+      gfm,
+      [
+        remarkWikiLink,
+        { pathFormat: "obsidian-short", permalinks: options?.permalinks },
+      ],
+      ...userRemarkPlugins,
+    ]);
 
   const ast = processor.parse(source);
 
