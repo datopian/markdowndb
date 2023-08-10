@@ -14,18 +14,14 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "build": "tsc --p tsconfig.lib.json",
     "changeset": "changeset",
+    "prepublishOnly": "npm run build",
     "release": "changeset publish"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/datopian/markdowndb.git"
   },
-  "keywords": [
-    "markdown",
-    "database",
-    "content",
-    "obsidian"
-  ],
+  "keywords": ["markdown", "database", "content", "obsidian"],
   "author": "Rufus Pollock",
   "license": "MIT",
   "bugs": {
@@ -35,9 +31,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "type": "module",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
