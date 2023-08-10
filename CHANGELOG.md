@@ -1,5 +1,11 @@
 # mddb
 
+## 0.2.1
+
+### Patch Changes
+
+- [`1cc8bcc`](https://github.com/datopian/markdowndb/commit/1cc8bcc2b351f1ef83ee6e1cc30065ea48c10b2f) Thanks [@olayway](https://github.com/olayway)! - Fix missing build files in npm package
+
 ## 0.2.0
 
 ### Minor Changes
