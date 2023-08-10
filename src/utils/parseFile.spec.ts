@@ -2,7 +2,8 @@ import { parseFile } from "./parseFile";
 
 const source = `---
 title: Hello World
-tags: [hello, world]
+authors: [John Doe, Jane Doe]
+tags: a, b, c
 ---
 # Hello World
 [[Some Link]]
@@ -15,7 +16,8 @@ describe("parseFile", () => {
   it("should parse a file returning metadata and wiki links", () => {
     const expectedMetadata = {
       title: "Hello World",
-      tags: ["hello", "world"],
+      authors: ["John Doe", "Jane Doe"],
+      tags: ["a", "b", "c"],
     };
     const expectedLinks = [
       { linkType: "normal", linkSrc: "Some Link" },
@@ -31,7 +33,8 @@ describe("parseFile", () => {
   it("should parse a file returning metadata and wiki links with Obsidian-style shortest paths", () => {
     const expectedMetadata = {
       title: "Hello World",
-      tags: ["hello", "world"],
+      authors: ["John Doe", "Jane Doe"],
+      tags: ["a", "b", "c"],
     };
     const expectedLinks = [
       { linkType: "normal", linkSrc: "/some/folder/Some Link" },

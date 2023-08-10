@@ -5,6 +5,11 @@ export function parseFile(source: string, options?: { permalinks?: string[] }) {
   // Metadata
   const { data: metadata } = matter(source);
 
+  // Obsidian style tags i.e. tags: tag1, tag2, tag3
+  if (metadata.tags && typeof metadata.tags === "string") {
+    metadata.tags = metadata.tags.split(",").map((tag: string) => tag.trim());
+  }
+
   // Links
   const links = extractWikiLinks(source, { permalinks: options?.permalinks });
 
