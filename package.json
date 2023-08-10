@@ -44,7 +44,7 @@
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
   "dependencies": {
-    "@flowershow/remark-wiki-link": "^1.1.2",
+    "@portaljs/remark-wiki-link": "^1.0.4",
     "gray-matter": "^4.0.3",
     "knex": "^2.4.2",
     "remark-gfm": "^3.0.1",
