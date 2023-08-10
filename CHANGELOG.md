@@ -1,5 +1,15 @@
 # mddb
 
+## 0.2.0
+
+### Minor Changes
+
+- [`6f93669`](https://github.com/datopian/markdowndb/commit/6f93669d748e7c7c4c5d72cf100f251a21603fe3) Thanks [@olayway](https://github.com/olayway)! - Extract wiki links with Obsidian style shortest paths
+
+### Patch Changes
+
+- [#35](https://github.com/datopian/markdowndb/pull/35) [`14520be`](https://github.com/datopian/markdowndb/commit/14520befd9bd8ca231904b44652fddbf25d7d464) Thanks [@olayway](https://github.com/olayway)! - Add support for Obsidian style tags list in frontmatter (e.g. `tags: a,b,c`).
+
 ## 0.1.9
 
 ### Patch Changes
