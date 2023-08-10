@@ -1,6 +1,6 @@
 {
   "name": "mddb",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Parse markdown files and store them in an SQL database.",
   "bin": {
     "mddb": "./dist/src/bin/index.js"
@@ -21,7 +21,12 @@
     "type": "git",
     "url": "git+https://github.com/datopian/markdowndb.git"
   },
-  "keywords": ["markdown", "database", "content", "obsidian"],
+  "keywords": [
+    "markdown",
+    "database",
+    "content",
+    "obsidian"
+  ],
   "author": "Rufus Pollock",
   "license": "MIT",
   "bugs": {
@@ -31,7 +36,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
