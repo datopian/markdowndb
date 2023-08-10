@@ -11,13 +11,9 @@ jobs:
     name: Test
     timeout-minutes: 15
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node: [16, 18]
-
-    name: Node ${{ matrix.node }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
