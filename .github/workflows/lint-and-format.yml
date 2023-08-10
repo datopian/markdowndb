@@ -22,6 +22,6 @@ jobs:
       - name: Install modules
         run: npm ci
       - name: Eslint
-        run: npm run lint:check
+        run: npm run lint
       - name: Prettier
         run: npm run format:check
