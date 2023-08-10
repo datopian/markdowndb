@@ -1,4 +1,3 @@
-# TODO set this up as a status check on PRs so that they can't be merged if it fails
 name: Lint & format check
 
 on:
