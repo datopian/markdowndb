@@ -238,8 +238,9 @@ export class MarkdownDB {
     filetypes?: string[];
     tags?: string[];
     extensions?: string[];
+    frontmatter?: Record<string, string | number | boolean>;
   }): Promise<MddbFile[]> {
-    const { filetypes, tags, extensions, folder } = query || {};
+    const { filetypes, tags, extensions, folder, frontmatter } = query || {};
 
     const files = await this.db
       // TODO join only if tags are specified ?
@@ -259,6 +260,34 @@ export class MarkdownDB {
 
         if (filetypes) {
           builder.whereIn("filetype", filetypes);
+        }
+
+        if (frontmatter) {
+          Object.entries(frontmatter).forEach(([key, value]) => {
+            if (typeof value === "string" || typeof value === "number") {
+              builder.whereRaw(`json_extract(metadata, '$.${key}') = ?`, [
+                value,
+              ]);
+            } else if (typeof value === "boolean") {
+              if (value) {
+                builder.whereRaw(`json_extract(metadata, '$.${key}') = ?`, [
+                  true,
+                ]);
+              } else {
+                builder.where(function () {
+                  this.whereRaw(`json_extract(metadata, '$.${key}') = ?`, [
+                    false,
+                  ]).orWhereRaw(`json_extract(metadata, '$.${key}') IS NULL`);
+                });
+              }
+            }
+            // To check if the provided value exists in an array inside the JSON
+            else {
+              builder.whereRaw(`json_extract(metadata, '$.${key}') LIKE ?`, [
+                `%${value}%`,
+              ]);
+            }
+          });
         }
       })
       .select("files.*")

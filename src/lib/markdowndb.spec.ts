@@ -110,6 +110,51 @@ describe("MarkdownDB - default config", () => {
       });
     });
 
+    test("can query by a frontmatter field", async () => {
+      const dbFiles = await mddb.getFiles({
+        frontmatter: { author: "John Doe" },
+      });
+      const dbFilesPaths = dbFiles.map((f) => f.file_path);
+
+      const expectedPaths = [
+        `${pathToContentFixture}/blog/blog1.mdx`,
+        `${pathToContentFixture}/blog/blog2.mdx`,
+      ];
+
+      expect(dbFilesPaths).toHaveLength(expectedPaths.length);
+      dbFilesPaths.forEach((p) => {
+        expect(expectedPaths).toContain(p);
+      });
+    });
+
+    test("can query by multiple frontmatter fields", async () => {
+      const dbFiles = await mddb.getFiles({
+        frontmatter: { author: "John Doe", draft: true },
+      });
+      const dbFilesPaths = dbFiles.map((f) => f.file_path);
+
+      const expectedPaths = [`${pathToContentFixture}/blog/blog1.mdx`];
+
+      expect(dbFilesPaths).toHaveLength(expectedPaths.length);
+      dbFilesPaths.forEach((p) => {
+        expect(expectedPaths).toContain(p);
+      });
+    });
+
+    test("can get records with non-existing field for `false` queries", async () => {
+      const dbFiles = await mddb.getFiles({
+        frontmatter: { author: "John Doe", draft: false },
+      });
+      const dbFilesPaths = dbFiles.map((f) => f.file_path);
+
+      const expectedPaths = [`${pathToContentFixture}/blog/blog2.mdx`];
+
+      expect(dbFilesPaths).toHaveLength(expectedPaths.length);
+      dbFilesPaths.forEach((p) => {
+        expect(expectedPaths).toContain(p);
+      });
+    });
+
     test("can query by tags AND filetypes AND extensions", async () => {
       const dbFiles = await mddb.getFiles({
         tags: ["culture"],
