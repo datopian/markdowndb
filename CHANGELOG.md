@@ -1,5 +1,11 @@
 # mddb
 
+## 0.3.0
+
+### Minor Changes
+
+- [`52ff842`](https://github.com/datopian/markdowndb/commit/52ff8429cb0058f66f033b9ecdd180c854a00573) Thanks [@olayway](https://github.com/olayway)! - Support for querying files by frontmatter field values (exact matches only).
+
 ## 0.2.1
 
 ### Patch Changes
