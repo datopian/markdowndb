@@ -44,6 +44,7 @@
   "types": "./dist/src/index.d.ts",
   "dependencies": {
     "@portaljs/remark-wiki-link": "^1.0.4",
+    "chokidar": "^3.5.3",
     "gray-matter": "^4.0.3",
     "knex": "^2.4.2",
     "remark-gfm": "^3.0.1",

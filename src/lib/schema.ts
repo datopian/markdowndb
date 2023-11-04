@@ -1,31 +1,6 @@
 import { Knex } from "knex";
 import { areUniqueObjectsByKey } from "./validate.js";
-
-/*
- * Types
- */
-export enum Table {
-  Files = "files",
-  Tags = "tags",
-  FileTags = "file_tags",
-  Links = "links",
-}
-
-type MetaData = {
-  [key: string]: any;
-};
-
-/*
- * Schema
- */
-interface File {
-  _id: string;
-  file_path: string;
-  extension: string;
-  url_path: string | null;
-  filetype: string | null;
-  metadata: MetaData | null;
-}
+import { Table, File, MetaData, Link, Tag, FileTag } from "./schemaTypes.js";
 
 class MddbFile {
   static table = Table.Files;
@@ -81,7 +56,7 @@ class MddbFile {
     await db.schema.dropTableIfExists(this.table);
   }
 
-  static batchInsert(db: Knex, files: File[]) {
+  static async batchInsert(db: Knex, files: File[]) {
     if (!areUniqueObjectsByKey(files, "_id")) {
       throw new Error("Files must have unique _id");
     }
@@ -95,14 +70,50 @@ class MddbFile {
       };
     });
 
-    return db.batchInsert(Table.Files, serializedFiles);
+    return await db.batchInsert(Table.Files, serializedFiles);
   }
-}
 
-interface Link {
-  link_type: "normal" | "embed";
-  from: string;
-  to: string;
+  static async insert(db: Knex, file: File) {
+    await db(Table.Files).insert({
+      ...file,
+      metadata: JSON.stringify(file.metadata),
+    });
+  }
+
+  static async deleteById(db: Knex, fileId: string) {
+    await db(Table.Files)
+      .where({
+        _id: fileId,
+      })
+      .delete();
+  }
+  static async deleteByFilePath(db: Knex, file_path: string) {
+    await db(Table.Files)
+      .where({
+        file_path: file_path,
+      })
+      .delete();
+  }
+
+  static async updateFileProperties(
+    db: Knex,
+    fileId: string,
+    updatedProperties: Partial<File>
+  ) {
+    const updatedPropertiesCopy = { ...updatedProperties } as any; // Create a copy of the original object
+
+    if (updatedPropertiesCopy.metadata) {
+      updatedPropertiesCopy.metadata = JSON.stringify(
+        updatedPropertiesCopy.metadata
+      );
+    }
+
+    await db("files")
+      .where({
+        _id: fileId,
+      })
+      .update(updatedPropertiesCopy);
+  }
 }
 
 class MddbLink {
@@ -149,13 +160,29 @@ class MddbLink {
     await db.schema.dropTableIfExists(this.table);
   }
 
-  static batchInsert(db: Knex, links: Link[]) {
-    return db.batchInsert(Table.Links, links);
-  }
-}
+  static async batchInsert(db: Knex, links: Link[]) {
+    if (links.length === 0) {
+      return;
+    }
 
-interface Tag {
-  name: string;
+    return await db.batchInsert(Table.Links, links);
+  }
+
+  static async insert(db: Knex, link: Link) {
+    await db(Table.Links).insert(link);
+  }
+
+  static async delete(db: Knex, link: Link) {
+    await db(Table.Links).where(link).delete();
+  }
+
+  static async deleteByFileId(db: Knex, fileId: string) {
+    await db(Table.Links)
+      .where({
+        from: fileId,
+      })
+      .delete();
+  }
 }
 
 class MddbTag {
@@ -194,16 +221,22 @@ class MddbTag {
   }
 
   static batchInsert(db: Knex, tags: Tag[]) {
+    if (tags.length === 0) {
+      return;
+    }
     if (!areUniqueObjectsByKey(tags, "name")) {
       throw new Error("Tags must have unique name");
     }
     return db.batchInsert(Table.Tags, tags);
   }
-}
 
-interface FileTag {
-  tag: string;
-  file: string;
+  static async insert(db: Knex, tag: Tag) {
+    await db(Table.Tags).insert(tag);
+  }
+
+  static async delete(db: Knex, tag: Tag) {
+    await db(Table.Tags).where(tag).delete();
+  }
 }
 
 class MddbFileTag {
@@ -237,9 +270,29 @@ class MddbFileTag {
     await db.schema.dropTableIfExists(this.table);
   }
 
-  static batchInsert(db: Knex, fileTags: FileTag[]) {
-    return db.batchInsert(Table.FileTags, fileTags);
+  static async batchInsert(db: Knex, fileTags: FileTag[]) {
+    if (fileTags.length === 0) {
+      return;
+    }
+
+    return await db.batchInsert(Table.FileTags, fileTags);
+  }
+
+  static async insert(db: Knex, fileTag: FileTag) {
+    return await db(Table.FileTags).insert(fileTag);
+  }
+
+  static async delete(db: Knex, fileTag: FileTag) {
+    await db(Table.FileTags).where(fileTag).delete();
+  }
+
+  static async deleteByFileId(db: Knex, fileId: string) {
+    await db(Table.FileTags)
+      .where({
+        file: fileId,
+      })
+      .delete();
   }
 }
 
-export { File, MddbFile, Link, MddbLink, Tag, MddbTag, FileTag, MddbFileTag };
+export { MddbFile, MddbLink, MddbTag, MddbFileTag };
