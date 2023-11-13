@@ -1,31 +1,6 @@
 import { Knex } from "knex";
 import { areUniqueObjectsByKey } from "./validate.js";
-
-/*
- * Types
- */
-export enum Table {
-  Files = "files",
-  Tags = "tags",
-  FileTags = "file_tags",
-  Links = "links",
-}
-
-type MetaData = {
-  [key: string]: any;
-};
-
-/*
- * Schema
- */
-interface File {
-  _id: string;
-  file_path: string;
-  extension: string;
-  url_path: string | null;
-  filetype: string | null;
-  metadata: MetaData | null;
-}
+import { Table, File, MetaData, Link, Tag, FileTag } from "./types/schemaTypes.js";
 
 class MddbFile {
   static table = Table.Files;
@@ -82,6 +57,10 @@ class MddbFile {
   }
 
   static batchInsert(db: Knex, files: File[]) {
+    if (files.length === 0) {
+      return;
+    }
+
     if (!areUniqueObjectsByKey(files, "_id")) {
       throw new Error("Files must have unique _id");
     }
@@ -97,12 +76,6 @@ class MddbFile {
 
     return db.batchInsert(Table.Files, serializedFiles);
   }
-}
-
-interface Link {
-  link_type: "normal" | "embed";
-  from: string;
-  to: string;
 }
 
 class MddbLink {
@@ -150,12 +123,12 @@ class MddbLink {
   }
 
   static batchInsert(db: Knex, links: Link[]) {
+    if (links.length === 0) {
+      return;
+    }
+
     return db.batchInsert(Table.Links, links);
   }
-}
-
-interface Tag {
-  name: string;
 }
 
 class MddbTag {
@@ -194,16 +167,14 @@ class MddbTag {
   }
 
   static batchInsert(db: Knex, tags: Tag[]) {
+    if (tags.length === 0) {
+      return;
+    }
     if (!areUniqueObjectsByKey(tags, "name")) {
       throw new Error("Tags must have unique name");
     }
     return db.batchInsert(Table.Tags, tags);
   }
-}
-
-interface FileTag {
-  tag: string;
-  file: string;
 }
 
 class MddbFileTag {
@@ -238,8 +209,12 @@ class MddbFileTag {
   }
 
   static batchInsert(db: Knex, fileTags: FileTag[]) {
+    if (fileTags.length === 0) {
+      return;
+    }
+
     return db.batchInsert(Table.FileTags, fileTags);
   }
 }
 
-export { File, MddbFile, Link, MddbLink, Tag, MddbTag, FileTag, MddbFileTag };
+export { MddbFile, MddbLink, MddbTag, MddbFileTag };
