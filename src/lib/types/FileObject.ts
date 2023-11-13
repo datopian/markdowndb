@@ -1,8 +1,7 @@
 import { WikiLink } from "../../utils";
-import { File, Tag } from "./schemaTypes";
+import { File } from "./schemaTypes";
 
-export interface FileObject {
-  file: File;
-  tags: Tag[];
+export interface FileObject extends File {
+  tags: string[];
   links: WikiLink[];
 }

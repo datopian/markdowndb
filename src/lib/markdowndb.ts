@@ -2,17 +2,9 @@ import knex, { Knex } from "knex";
 
 import { MddbFile, MddbTag, MddbFileTag, MddbLink } from "./schema.js";
 import { DbQueryManager } from "./DbQueryManager.js";
-import { FilesQuery, LinkQuery } from "./types/DbQueryTypes.js";
+import type { FilesQuery, LinkQuery } from "./types/DbQueryTypes.js";
 import { indexFolderToObjects } from "./indexFolderToObjects.js";
-
-export const defaultFilePathToUrl = (filePath: string) => {
-  let url = filePath
-    .replace(/\.(mdx|md)/, "")
-    .replace(/\\/g, "/") // replace windows backslash with forward slash
-    .replace(/(\/)?index$/, ""); // remove index from the end of the permalink
-  url = url.length > 0 ? url : "/"; // for home page
-  return encodeURI(url);
-};
+import { defaultFilePathToUrl } from "../utils/defaultFilePathToUrl.js";
 
 export class MarkdownDB {
   config: Knex.Config;
@@ -42,14 +34,14 @@ export class MarkdownDB {
     await resetDatabaseTables(this.db);
     const { files, tags, fileTags, links } = indexFolderToObjects(
       folderPath,
-      ignorePatterns,
-      pathToUrlResolver
+      pathToUrlResolver,
+      ignorePatterns
     );
 
-    MddbFile.batchInsert(this.db, files);
-    MddbTag.batchInsert(this.db, tags);
-    MddbFileTag.batchInsert(this.db, fileTags);
-    MddbLink.batchInsert(this.db, links);
+    await MddbFile.batchInsert(this.db, files);
+    await MddbTag.batchInsert(this.db, tags);
+    await MddbFileTag.batchInsert(this.db, fileTags);
+    await MddbLink.batchInsert(this.db, links);
   }
 
   async getFileById(id: string): Promise<MddbFile | null> {

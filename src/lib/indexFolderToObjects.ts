@@ -1,48 +1,55 @@
-import { WikiLink, getUniqueValues, recursiveWalkDir } from "../utils/index.js";
-import { markdownToObject } from "./markdownToObject.js";
+import { getUniqueValues, recursiveWalkDir } from "../utils/index.js";
+import type { WikiLink } from "../utils/index.js";
+import { extractFileSchemeFromObject } from "../utils/extractFileSchemeFromObject.js";
+import { readLocalMarkdownFileToObject } from "./readLocalMarkdownFileToObject.js";
 import { File, FileTag, Link, Tag } from "./types/schemaTypes.js";
 
 export function indexFolderToObjects(
   folderPath: string,
-  ignorePatterns?: RegExp[],
-  pathToUrlResolver?: (filePath: string) => string
+  pathToUrlResolver: (filePath: string) => string,
+  ignorePatterns?: RegExp[]
 ) {
   const filePathsToIndex = recursiveWalkDir(folderPath);
   const files: File[] = [];
-  const tags: Tag[] = [];
+  const tags: string[] = [];
   const fileTags: FileTag[] = [];
   const links: Link[] = [];
-  const filteredFilePathsToIndex = filePathsToIndex.filter((filePath) => {
-    return !(
-      ignorePatterns && ignorePatterns.some((pattern) => pattern.test(filePath))
-    );
-  });
+  const filteredFilePathsToIndex = filePathsToIndex.filter((filePath) =>
+    shouldIncludeFile(filePath, ignorePatterns)
+  );
 
   for (const filePath of filteredFilePathsToIndex) {
-    const fileObject = markdownToObject(folderPath, filePath, filePathsToIndex);
+    const fileObject = readLocalMarkdownFileToObject(
+      folderPath,
+      filePath,
+      filePathsToIndex,
+      pathToUrlResolver
+    );
 
-    files.push(fileObject.file);
+    const file = extractFileSchemeFromObject(fileObject);
+    files.push(file);
+
     tags.push(...fileObject.tags);
 
     const fileTagsToInsert = fileObject.tags.map((tag) => ({
-      tag: tag.name,
-      file: fileObject.file._id,
+      tag: tag,
+      file: fileObject._id,
     }));
-    const uniqueFileTags = getUniqueValues(fileTagsToInsert);
-    fileTags.push(...uniqueFileTags);
+    fileTags.push(...fileTagsToInsert);
 
     const linksToInsert: Link[] = processWikiLinks(
       fileObject.links,
-      fileObject.file._id,
+      fileObject._id,
       filePathsToIndex
     );
     links.push(...linksToInsert);
   }
 
   const uniqueTags = getUniqueValues(tags);
+  const TagsToInsert = uniqueTags.map((tag) => ({ name: tag }));
   return {
     files: files,
-    tags: uniqueTags,
+    tags: TagsToInsert,
     fileTags: fileTags,
     links: links,
   };
@@ -60,4 +67,13 @@ function processWikiLinks(
       link_type: link.linkType,
     }))
     .filter((link) => link.to !== undefined);
+}
+
+function shouldIncludeFile(
+  filePath: string,
+  ignorePatterns?: RegExp[]
+): boolean {
+  return !(
+    ignorePatterns && ignorePatterns.some((pattern) => pattern.test(filePath))
+  );
 }
