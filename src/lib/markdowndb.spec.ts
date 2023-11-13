@@ -1,7 +1,8 @@
 // import knex from "knex";
 import { MarkdownDB } from "./markdowndb";
-import { File, MddbFile, Table } from "./schema";
+import {  MddbFile } from "./schema";
 import { recursiveWalkDir } from "../utils";
+import { File, Table } from "./types/schemaTypes";
 
 /**
  * @jest-environment node
