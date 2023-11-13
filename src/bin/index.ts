@@ -18,12 +18,11 @@ const client = new MarkdownDB({
   },
 });
 
-// Ignore top-level await errors
-//@ts-ignore
 await client.init();
 
-//@ts-ignore
 await client.indexFolder({
   folderPath: contentPath,
   ignorePatterns: ignorePatterns,
 });
+
+process.exit();
