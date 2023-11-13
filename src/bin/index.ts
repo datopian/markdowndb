@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import { MarkdownDB } from "../lib/markdowndb.js";
-// import MddbFolderWatcher from "./watch.js";
 
 // TODO get these from markdowndb.config.js or something
 const dbPath = "markdown.db";
