@@ -2,7 +2,7 @@ import { getUniqueValues, recursiveWalkDir } from "../utils/index.js";
 import type { WikiLink } from "../utils/index.js";
 import { extractFileSchemeFromObject } from "../utils/extractFileSchemeFromObject.js";
 import { readLocalMarkdownFileToObject } from "./readLocalMarkdownFileToObject.js";
-import { File, FileTag, Link, Tag } from "./types/schemaTypes.js";
+import type { File, FileTag, Link, Tag } from "./types/schemaTypes.js";
 
 export function indexFolderToObjects(
   folderPath: string,
