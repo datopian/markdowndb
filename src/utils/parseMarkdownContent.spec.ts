@@ -1,4 +1,4 @@
-import { parseFile } from "./parseFile";
+import { parseMarkdownContent } from "./parseMarkdownContent";
 
 const source = `---
 title: Hello World
@@ -25,7 +25,7 @@ describe("parseFile", () => {
       { linkType: "normal", linkSrc: "blog/Some Other Link" },
       { linkType: "embed", linkSrc: "Some Image.png" },
     ];
-    const { metadata, links } = parseFile(source);
+    const { metadata, links } = parseMarkdownContent(source);
     expect(metadata).toEqual(expectedMetadata);
     expect(links).toEqual(expectedLinks);
   });
@@ -48,7 +48,7 @@ describe("parseFile", () => {
       "/some/folder/blog/Some Other Link",
       "/some/folder/Some Image.png",
     ];
-    const { metadata, links } = parseFile(source, { permalinks });
+    const { metadata, links } = parseMarkdownContent(source, { permalinks });
     expect(metadata).toEqual(expectedMetadata);
     expect(links).toEqual(expectedLinks);
   });

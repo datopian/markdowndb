@@ -1,7 +1,7 @@
 import matter from "gray-matter";
 import { extractWikiLinks } from "./extractWikiLinks.js";
 
-export function parseFile(source: string, options?: { permalinks?: string[] }) {
+export function parseMarkdownContent(source: string, options?: { permalinks?: string[] }) {
   // Metadata
   const { data: metadata } = matter(source);
 
