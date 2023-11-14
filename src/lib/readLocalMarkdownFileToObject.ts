@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { getUniqueValues, parseMarkdownContent } from "../utils/index.js";
+import { parseMarkdownContent } from "../utils/index.js";
 import type { FileObject } from "./types/FileObject.js";
 import { MddbFile } from "./schema.js";
 import { generateFileIdFromPath } from "../utils/index.js";
@@ -52,9 +52,8 @@ export function readLocalMarkdownFileToObject(
     fileObject.metadata = metadata;
     fileObject.filetype = metadata?.type || null;
     fileObject.links = links;
-    const tags = metadata.tags;
-    if (tags) {
-      fileObject.tags = getUniqueValues(tags);
+    if (metadata.tags) {
+      fileObject.tags = metadata.tags;
     }
 
     return fileObject;
