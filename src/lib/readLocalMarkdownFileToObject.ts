@@ -27,12 +27,11 @@ export function readLocalMarkdownFileToObject(
     links: [],
   };
 
-  // if not md or mdx return this
-  const isExtensionNotSupported =
-    !MddbFile.supportedExtensions.includes(extension);
-  if (isExtensionNotSupported) {
-    return fileObject;
-  }
+const isExtensionSupported = MddbFile.supportedExtensions.includes(extension);
+
+if (!isExtensionSupported) {
+  return fileObject;
+}
 
   // url_path
   const pathRelativeToFolder = path.relative(folderPath, filePath);
