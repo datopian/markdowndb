@@ -2,18 +2,18 @@ import fs from "fs";
 import path from "path";
 import { parseMarkdownContent } from "../utils/index.js";
 import type { FileObject } from "./types/FileObject.js";
-import { MddbFile } from "./schema.js";
-import { generateFileIdFromPath } from "../utils/index.js";
-import { getFileExtensionFromPath } from "../utils/index.js";
+import crypto from "crypto";
 
-export function readLocalMarkdownFileToObject(
-  folderPath: string,
+export function processFile(
   filePath: string,
+  folderPath: string,
   filePathsToIndex: string[],
   pathToUrlResolver: (filePath: string) => string
 ): FileObject {
-  const id = generateFileIdFromPath(filePath);
-  const extension = getFileExtensionFromPath(filePath);
+  const encodedPath = Buffer.from(filePath, "utf-8").toString();
+  const id = crypto.createHash("sha1").update(encodedPath).digest("hex");
+  const extension = path.extname(filePath).slice(1);
+
   const fileObject: FileObject = {
     _id: id,
     file_path: filePath,
@@ -26,9 +26,8 @@ export function readLocalMarkdownFileToObject(
   };
 
   // if not md or mdx return this
-  const isExtensionNotSupported =
-    !MddbFile.supportedExtensions.includes(extension);
-  if (isExtensionNotSupported) {
+  const isExtensionSupported = ["md", "mdx"].includes(extension);
+  if (!isExtensionSupported) {
     return fileObject;
   }
 

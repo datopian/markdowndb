@@ -1,7 +1,7 @@
 import { getUniqueValues, recursiveWalkDir } from "../utils/index.js";
 import type { WikiLink } from "../utils/index.js";
 import { extractFileSchemeFromObject } from "../utils/extractFileSchemeFromObject.js";
-import { readLocalMarkdownFileToObject } from "./readLocalMarkdownFileToObject.js";
+import { processFile } from "./processFile.js";
 import type { File, FileTag, Link, Tag } from "./types/schemaTypes.js";
 
 export function indexFolderToObjects(
@@ -19,7 +19,7 @@ export function indexFolderToObjects(
   );
 
   for (const filePath of filteredFilePathsToIndex) {
-    const fileObject = readLocalMarkdownFileToObject(
+    const fileObject = processFile(
       folderPath,
       filePath,
       filePathsToIndex,
