@@ -2,10 +2,11 @@
   "compilerOptions": {
     "allowJs": true,
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "declaration": true,
+    "composite": true
   },
-  "files": [],
-  "include": [],
+  "include": ["src/**/*.ts"],
   "references": [
     {
       "path": "./tsconfig.lib.json"
