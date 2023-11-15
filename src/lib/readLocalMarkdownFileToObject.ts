@@ -1,10 +1,12 @@
 import fs from "fs";
 import path from "path";
-import { parseMarkdownContent } from "../utils/index.js";
+import {
+  parseMarkdownContent,
+  generateFileIdFromPath,
+  getFileExtensionFromPath
+} from "../utils/index.js";
 import type { FileObject } from "./types/FileObject.js";
 import { MddbFile } from "./schema.js";
-import { generateFileIdFromPath } from "../utils/index.js";
-import { getFileExtensionFromPath } from "../utils/index.js";
 
 export function readLocalMarkdownFileToObject(
   folderPath: string,
