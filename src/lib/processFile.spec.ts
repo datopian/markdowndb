@@ -13,7 +13,7 @@ describe("Can parse a file and get file info", () => {
       [],
       (filePath: string) => filePath
     );
-    console.log(fileInfo);
+
     expect(fileInfo.file_path).toBe(fullPath);
     expect(fileInfo.extension).toBe("mdx");
     expect(fileInfo.tags).toEqual(["tag1", "tag2", "tag3"]);
