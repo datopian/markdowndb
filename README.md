@@ -14,6 +14,8 @@ MarkdownDB is a javascript library for treating markdown files as a database -- 
 - [x] **Index a folder of files** - create a db index given a folder of markdown and other files
   - [ ] BONUS Index multiple folders (with support for configuring e.g. prefixing in some way e.g. i have all my blog files in this separate folder over here)
   - [x] **Command line tool for indexing**: Create a markdowndb (index) on the command line
+  - [ ] SQL(ite) index
+  - [ ] JSON index
 
 Extract structured data like:
 
@@ -276,19 +278,15 @@ mddb.getTags();
 mddb.getLinks({ fileId: "ID", direction: "forward" });
 ```
 
-## Features
+## Architecture
 
-- indexing markdown files into an SQLite database, with:
-  - frontmatter data extraction (specifically tags and document types)
-  - wiki links extraction (CommonMark links, Obsidian links and embeds)
-- querying database for:
-  - a list of all or some of the markdown files in your content folder: e.g. get all your blog posts tagged with "tutorial"
-  - get backlinks to or forward on a given page, and e.g. list them in the bottom of your pages, so that users can quickly find related content
+```mermaid
+graph TD
 
-## Upcoming features
-
-- custom document types and schemas with data validation
-- computed fields
-- indexing multiple folders
-- extracting tasks
-- and much more...
+markdown --remark-parse--> st[syntax tree]
+st --extract features--> jsobj1[TS Object eg. File plus Metadata plus Tags plus Links]
+jsobj1 --computing--> jsobj[TS Objects]
+jsobj --convert to sql--> sqlite[SQLite markdown.db]
+jsobj --write to disk--> json[JSON on disk in .markdowndb folder]
+jsobj --tests--> testoutput[Test results]
+```
