@@ -1,5 +1,6 @@
 import matter from "gray-matter";
 import { extractWikiLinks } from "./extractWikiLinks.js";
+import { extractTagsFromBody } from "./extractTagsFromBody.js";
 
 export function parseFile(source: string, options?: { permalinks?: string[] }) {
   // Metadata
@@ -9,6 +10,9 @@ export function parseFile(source: string, options?: { permalinks?: string[] }) {
   if (metadata.tags && typeof metadata.tags === "string") {
     metadata.tags = metadata.tags.split(",").map((tag: string) => tag.trim());
   }
+
+  const bodyTags = extractTagsFromBody(source);
+  metadata.tags = metadata.tags ? [...metadata.tags, ...bodyTags] : bodyTags;
 
   // Links
   const links = extractWikiLinks("", source, {
