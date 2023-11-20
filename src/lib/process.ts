@@ -41,10 +41,11 @@ export function processFile(filePath: string) {
   });
 
   const { metadata, links } = parseFile(source, {
+    from: filePath,
     permalinks: [],
   });
   fileInfo.metadata = metadata;
-  fileInfo.links = links;
+  fileInfo.links = links.map((link) => ({ ...link, from: filePath }));
 
   const filetype = metadata?.type || null;
   fileInfo.filetype = filetype;

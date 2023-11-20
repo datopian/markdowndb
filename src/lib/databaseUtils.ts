@@ -1,5 +1,7 @@
 import { Knex } from "knex";
 import { MddbFile, MddbTag, MddbLink, MddbFileTag, File } from "./schema.js";
+import path from "path";
+import { WikiLink } from "../utils/extractWikiLinks.js";
 
 export async function resetDatabaseTables(db: Knex) {
   const tableNames = [MddbFile, MddbTag, MddbFileTag, MddbLink];
@@ -14,17 +16,28 @@ export function mapFileToInsert(file: any) {
   return { _id, file_path, extension, url_path, filetype, metadata };
 }
 export function mapLinksToInsert(filesToInsert: File[], file: any) {
-  return file.links.map((link: any) => {
-    const to = findFileToInsert(filesToInsert, link.to);
+  return file.links.map((link: WikiLink) => {
+    let to: string | undefined;
+    if (!link.internal) {
+      to = link.toRaw;
+    } else {
+      to = findFileToInsert(filesToInsert, link.to)?._id;
+    }
     return {
       from: file._id,
-      to: to?._id,
+      to: to,
       link_type: link.embed ? "embed" : "normal",
     };
   });
 }
+
 function findFileToInsert(filesToInsert: File[], filePath: string) {
-  return filesToInsert.find(({ file_path }) => file_path === filePath);
+  const normalizedFilePath = path.normalize(filePath);
+
+  return filesToInsert.find(({ file_path }) => {
+    const normalizedFile = path.normalize(file_path);
+    return normalizedFile === normalizedFilePath;
+  });
 }
 export function isLinkToDefined(link: any) {
   return link.to !== undefined;
