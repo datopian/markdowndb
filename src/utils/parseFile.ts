@@ -11,7 +11,9 @@ export function parseFile(source: string, options?: { permalinks?: string[] }) {
   }
 
   // Links
-  const links = extractWikiLinks(source, { permalinks: options?.permalinks });
+  const links = extractWikiLinks("", source, {
+    permalinks: options?.permalinks,
+  });
 
   return {
     metadata,
