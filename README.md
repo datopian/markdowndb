@@ -9,6 +9,31 @@ MarkdownDB is a javascript library for treating markdown files as a database -- 
 
 **🚧 MarkdownDB is in its early development stage**
 
+## Features and Roadmap
+
+- [x] **Index a folder of files** - create a db index given a folder of markdown and other files
+  - [ ] BONUS Index multiple folders (with support for configuring e.g. prefixing in some way e.g. i have all my blog files in this separate folder over here)
+  - [x] **Command line tool for indexing**: Create a markdowndb (index) on the command line
+  - [ ] SQL(ite) index
+  - [ ] JSON index
+
+Extract structured data like:
+
+- [x] **Frontmatter metadata**: Extract markdown frontmatter and add in a metadata field
+  - [ ] deal with nested frontmatter (? what does this mean?)
+  - [ ] deal with casting types e.g. string, number so that we can query in useful ways e.g. find me all blog posts before date X
+- [ ] **Tags**: Extracts tags in markdown pages
+  - [x] Extract tags in frontmatter
+  - [ ] Extract tags in body like `#abc`
+- [ ] **Links**: links between files like `[hello](abc.md)` or wikilink style `[[xyz]]` so we can compute backlinks or deadlinks etc (see #4)
+- [ ] **Tasks**: extract tasks like this `- [ ] this is a task` (See obsidian data view)
+
+Data enhancement and validation
+
+- [ ] **Computed fields**: add new metadata properties based on existing metadata e.g. a slug field computed from title field; or, adding a title based on the first h1 heading in a doc; or, a type field based on the folder of the file (e.g. these are blog posts). cf https://www.contentlayer.dev/docs/reference/source-files/define-document-type#computedfields. #54
+- [ ] **Data validation and Document Types**: validate metadata against a schema/type so that I know the data in the database is "valid" #55
+  - [ ]  BYOT (bring your own types): i want to create my own types ... so that when i get an object out it is cast to the right typescript type
+
 ## Quick start
 
 ### You have a folder of markdown content
@@ -253,19 +278,15 @@ mddb.getTags();
 mddb.getLinks({ fileId: "ID", direction: "forward" });
 ```
 
-## Features
+## Architecture
 
-- indexing markdown files into an SQLite database, with:
-  - frontmatter data extraction (specifically tags and document types)
-  - wiki links extraction (CommonMark links, Obsidian links and embeds)
-- querying database for:
-  - a list of all or some of the markdown files in your content folder: e.g. get all your blog posts tagged with "tutorial"
-  - get backlinks to or forward on a given page, and e.g. list them in the bottom of your pages, so that users can quickly find related content
+```mermaid
+graph TD
 
-## Upcoming features
-
-- custom document types and schemas with data validation
-- computed fields
-- indexing multiple folders
-- extracting tasks
-- and much more...
+markdown --remark-parse--> st[syntax tree]
+st --extract features--> jsobj1[TS Object eg. File plus Metadata plus Tags plus Links]
+jsobj1 --computing--> jsobj[TS Objects]
+jsobj --convert to sql--> sqlite[SQLite markdown.db]
+jsobj --write to disk--> json[JSON on disk in .markdowndb folder]
+jsobj --tests--> testoutput[Test results]
+```
