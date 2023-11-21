@@ -7,7 +7,12 @@ describe("Can parse a file and get file info", () => {
   test("can parse a file", async () => {
     const filePath = "index.mdx";
     const fullPath = Path.join(pathToContentFixture, filePath);
-    const fileInfo = await processFile(fullPath);
+    const fileInfo = processFile(
+      pathToContentFixture,
+      fullPath,
+      (filePath) => filePath,
+      []
+    );
 
     expect(fileInfo.file_path).toBe(fullPath);
     expect(fileInfo.extension).toBe("mdx");

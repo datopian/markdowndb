@@ -1,22 +1,34 @@
 import crypto from "crypto";
 import fs from "fs";
+import path from "path";
 
 import { parseFile, WikiLink } from "../utils/index.js";
+import { File } from "./schema.js";
+
+export interface FileInfo extends File {
+  tags: string[];
+  links: WikiLink[];
+}
 
 // this file is an extraction of the file info parsing from markdowndb.ts without any sql stuff
 // TODO: add back (as an option) - providing a "root folder" path for resolve
-export function processFile(filePath: string) {
-  // gets key file info if any e.g. extension (file size??)
+export function processFile(
+  rootFolder: string,
+  filePath: string,
+  pathToUrlResolver: (filePath: string) => string,
+  filePathsToIndex: string[]
+) {
+  // Remove rootFolder from filePath
+  const relativePath = path.relative(rootFolder, filePath);
 
-  const encodedPath = Buffer.from(filePath, "utf-8").toString();
+  // gets key file info if any e.g. extension (file size??)
+  const encodedPath = Buffer.from(relativePath, "utf-8").toString();
   const id = crypto.createHash("sha1").update(encodedPath).digest("hex");
 
   // extension
-  // future use import Path from 'path'
-  // Path.extname
-  const [, extension] = filePath.match(/.(\w+)$/) || [];
+  const extension = path.extname(relativePath).slice(1);
 
-  let fileInfo: FileInfo = {
+  const fileInfo: FileInfo = {
     _id: id,
     file_path: filePath,
     extension,
@@ -41,11 +53,13 @@ export function processFile(filePath: string) {
   });
 
   const { metadata, links } = parseFile(source, {
-    from: filePath,
-    permalinks: [],
+    from: relativePath,
+    permalinks: filePathsToIndex,
   });
+
+  fileInfo.url_path = pathToUrlResolver(relativePath);
   fileInfo.metadata = metadata;
-  fileInfo.links = links.map((link) => ({ ...link, from: filePath }));
+  fileInfo.links = links.map((link) => ({ ...link, from: relativePath }));
 
   const filetype = metadata?.type || null;
   fileInfo.filetype = filetype;
@@ -54,38 +68,4 @@ export function processFile(filePath: string) {
   fileInfo.tags = tags;
 
   return fileInfo;
-}
-
-// let's put types here - later we'll refactor them out ...
-export interface FileInfo extends File {
-  tags: Tag[];
-  links: WikiLink[];
-}
-
-export interface File {
-  _id: string;
-  file_path: string;
-  extension: string;
-  url_path: string | null;
-  filetype: string | null;
-  metadata: MetaData | null;
-}
-
-export type MetaData = {
-  [key: string]: any;
-};
-
-export interface Link {
-  link_type: "normal" | "embed";
-  from: string;
-  to: string;
-}
-
-export interface Tag {
-  name: string;
-}
-
-export interface FileTag {
-  tag: string;
-  file: string;
 }

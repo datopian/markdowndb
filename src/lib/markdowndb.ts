@@ -10,7 +10,7 @@ import {
   isLinkToDefined,
   mapFileTagsToInsert,
   getUniqueValues,
-} from "./databaseUtils.js";
+} from "../utils/databaseUtils.js";
 
 const defaultFilePathToUrl = (filePath: string) => {
   let url = filePath
@@ -51,13 +51,19 @@ export class MarkdownDB {
     folderPath,
     // TODO support glob patterns
     ignorePatterns = [],
+    pathToUrlResolver = defaultFilePathToUrl,
   }: {
     folderPath: string;
     ignorePatterns?: RegExp[];
+    pathToUrlResolver?: (filePath: string) => string;
   }) {
     await resetDatabaseTables(this.db);
 
-    const fileObjects = indexFolder(folderPath, ignorePatterns);
+    const fileObjects = indexFolder(
+      folderPath,
+      pathToUrlResolver,
+      ignorePatterns
+    );
     const filesToInsert = fileObjects.map(mapFileToInsert);
     const uniqueTags = getUniqueValues(
       fileObjects.flatMap((file) => file.tags)
@@ -71,7 +77,6 @@ export class MarkdownDB {
     const fileTagsToInsert = fileObjects.flatMap(mapFileTagsToInsert);
 
     await MddbFile.batchInsert(this.db, filesToInsert);
-    // @ts-ignore
     await MddbTag.batchInsert(this.db, tagsToInsert);
     await MddbFileTag.batchInsert(this.db, fileTagsToInsert);
     await MddbLink.batchInsert(this.db, getUniqueValues(linksToInsert));
