@@ -189,6 +189,9 @@ describe("MarkdownDB - default config", () => {
     test("can get all tags", async () => {
       const dbTags = await mddb.getTags();
       const extectedTags = [
+        { name: "tag1" },
+        { name: "tag2" },
+        { name: "tag3" },
         { name: "economy" },
         { name: "politics" },
         { name: "sports" },
@@ -289,7 +292,7 @@ describe("MarkdownDB - custom config", () => {
     await mddb.init();
     await mddb.indexFolder({
       folderPath: pathToContentFixture,
-      ignorePatterns: [/\/ignore\/.*/],
+      ignorePatterns: [/[\\/]ignore[\\/].*/],
       pathToUrlResolver: (path) =>
         path
           .replace(/\.mdx?$/, "")
