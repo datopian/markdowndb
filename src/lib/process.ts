@@ -5,7 +5,7 @@ import { parseFile, WikiLink } from "../utils/index.js";
 
 // this file is an extraction of the file info parsing from markdowndb.ts without any sql stuff
 // TODO: add back (as an option) - providing a "root folder" path for resolve
-export function parseFile2(filePath: string) {
+export function processFile(filePath: string) {
   // gets key file info if any e.g. extension (file size??)
 
   const encodedPath = Buffer.from(filePath, "utf-8").toString();
@@ -41,10 +41,11 @@ export function parseFile2(filePath: string) {
   });
 
   const { metadata, links } = parseFile(source, {
+    from: filePath,
     permalinks: [],
   });
   fileInfo.metadata = metadata;
-  fileInfo.links = links;
+  fileInfo.links = links.map((link) => ({ ...link, from: filePath }));
 
   const filetype = metadata?.type || null;
   fileInfo.filetype = filetype;
@@ -56,7 +57,7 @@ export function parseFile2(filePath: string) {
 }
 
 // let's put types here - later we'll refactor them out ...
-interface FileInfo extends File {
+export interface FileInfo extends File {
   tags: Tag[];
   links: WikiLink[];
 }
