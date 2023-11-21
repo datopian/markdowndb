@@ -40,11 +40,14 @@ export function mapLinksToInsert(filesToInsert: File[], file: any) {
 }
 
 function findFileToInsert(filesToInsert: File[], filePath: string) {
-  const normalizedFilePath = path.normalize(filePath);
+  const filePathWithoutExt = path.join(
+    path.dirname(filePath),
+    path.basename(filePath, path.extname(filePath))
+  );
 
-  return filesToInsert.find(({ file_path }) => {
-    const normalizedFile = path.normalize(file_path);
-    return normalizedFile === normalizedFilePath;
+  return filesToInsert.find(({ url_path }) => {
+    const normalizedFile = path.normalize(url_path || "");
+    return normalizedFile === filePathWithoutExt;
   });
 }
 

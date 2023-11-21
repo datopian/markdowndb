@@ -22,7 +22,14 @@ describe("Can parse a file and get file info", () => {
       tags: ["tag1", "tag2", "tag3"],
     });
     expect(fileInfo.links).toEqual([
-      { linkSrc: "blog0.mdx", linkType: "normal" },
+      {
+        embed: true,
+        from: "index.mdx",
+        internal: true,
+        text: "link",
+        to: "blog0.mdx",
+        toRaw: "blog0.mdx",
+      },
     ]);
   });
 });
