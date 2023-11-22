@@ -20,7 +20,7 @@ describe("extractWikiLinks", () => {
           to: "abc/page-1",
           toRaw: "page-1",
           text: "Page 1",
-          embed: true,
+          embed: false,
           internal: true,
         },
       ];
@@ -36,7 +36,7 @@ describe("extractWikiLinks", () => {
           to: "abc/world.png",
           toRaw: "world.png",
           text: "hello",
-          embed: true,
+          embed: false,
           internal: true,
         },
       ];
@@ -52,7 +52,7 @@ describe("extractWikiLinks", () => {
           to: "abc/world.mdx",
           toRaw: "world.mdx",
           text: "hello",
-          embed: true,
+          embed: false,
           internal: true,
         },
       ];
@@ -68,7 +68,7 @@ describe("extractWikiLinks", () => {
           to: "abc/world",
           toRaw: "/world",
           text: "hello",
-          embed: true,
+          embed: false,
           internal: true,
         },
       ];
@@ -109,98 +109,98 @@ describe("extractWikiLinks", () => {
   });
 
   // TODO Obsidian wiki links
-  // describe("Obsidian wiki links", () => {
-  //   test("should extract wiki links", () => {
-  //     const source = "[[Page 1]] [[Page 2]] [[Page 3]]";
-  //     const expectedLinks = [
-  //       {
-  //         from: "abc/foobar.md",
-  //         to: "abc/Page 1.md",
-  //         toRaw: "Page 1",
-  //         text: "Page 1",
-  //         embed: false,
-  //         internal: true,
-  //       },
-  //       {
-  //         from: "abc/foobar.md",
-  //         to: "abc/Page 2.md",
-  //         toRaw: "Page 2",
-  //         text: "Page 2",
-  //         embed: false,
-  //         internal: true,
-  //       },
-  //       {
-  //         from: "abc/foobar.md",
-  //         to: "abc/Page 3.md",
-  //         toRaw: "Page 3",
-  //         text: "Page 3",
-  //         embed: false,
-  //         internal: true,
-  //       },
-  //     ];
-  //     const links = extractWikiLinks("abc/foobar.md", source);
-  //     expect(links).toHaveLength(expectedLinks.length);
-  //     links.forEach((link) => {
-  //       expect(expectedLinks).toContainEqual(link);
-  //     });
-  //   });
+  describe("Obsidian wiki links", () => {
+    test("should extract wiki links", () => {
+      const source = "[[Page 1]] [[Page 2]] [[Page 3]]";
+      const expectedLinks = [
+        {
+          embed: false,
+          from: "abc/foobar.md",
+          internal: true,
+          text: "",
+          to: "abc/Page 1",
+          toRaw: "Page 1",
+        },
+        {
+          embed: false,
+          from: "abc/foobar.md",
+          internal: true,
+          text: "",
+          to: "abc/Page 2",
+          toRaw: "Page 2",
+        },
+        {
+          embed: false,
+          from: "abc/foobar.md",
+          internal: true,
+          text: "",
+          to: "abc/Page 3",
+          toRaw: "Page 3",
+        },
+      ];
+      const links = extractWikiLinks("abc/foobar.md", source);
+      expect(links).toHaveLength(expectedLinks.length);
+      links.forEach((link) => {
+        expect(expectedLinks).toContainEqual(link);
+      });
+    });
 
-  //   test("should extract wiki links with Obsidian-style shortest path", () => {
-  //     const source = "[[Page 1]] [[Page 2]] [[Page 3]]";
-  //     const expectedLinks = [
-  //       {
-  //         from: "abc/foobar.md",
-  //         to: "abc/some/folder/Page 1.md",
-  //         toRaw: "/some/folder/Page 1",
-  //         text: "Page 1",
-  //         embed: false,
-  //         internal: true,
-  //       },
-  //       {
-  //         from: "abc/foobar.md",
-  //         to: "abc/some/folder/Page 2.md",
-  //         toRaw: "/some/folder/Page 2",
-  //         text: "Page 2",
-  //         embed: false,
-  //         internal: true,
-  //       },
-  //       {
-  //         from: "abc/foobar.md",
-  //         to: "abc/some/folder/Page 3.md",
-  //         toRaw: "/some/folder/Page 3",
-  //         text: "Page 3",
-  //         embed: false,
-  //         internal: true,
-  //       },
-  //     ];
-  //     const permalinks = [
-  //       "/some/folder/Page 1",
-  //       "/some/folder/Page 2",
-  //       "/some/folder/Page 3",
-  //     ];
-  //     const links = extractWikiLinks("abc/foobar.md", source, { permalinks });
-  //     expect(links).toHaveLength(expectedLinks.length);
-  //     links.forEach((link) => {
-  //       expect(expectedLinks).toContainEqual(link);
-  //     });
-  //   });
+    test("should extract wiki links with Obsidian-style shortest path", () => {
+      const source = "[[Page 1]] [[Page 2]] [[Page 3]]";
+      const expectedLinks = [
+        {
+          embed: false,
+          from: "abc/foobar.md",
+          internal: true,
+          text: "",
+          to: "abc/some/folder/Page 1",
+          toRaw: "/some/folder/Page 1",
+        },
+        {
+          embed: false,
+          from: "abc/foobar.md",
+          internal: true,
+          text: "",
+          to: "abc/some/folder/Page 2",
+          toRaw: "/some/folder/Page 2",
+        },
+        {
+          embed: false,
+          from: "abc/foobar.md",
+          internal: true,
+          text: "",
+          to: "abc/some/folder/Page 3",
+          toRaw: "/some/folder/Page 3",
+        },
+      ];
+      const permalinks = [
+        "/some/folder/Page 1",
+        "/some/folder/Page 2",
+        "/some/folder/Page 3",
+      ];
+      const links = extractWikiLinks("abc/foobar.md", source, { permalinks });
+      expect(links).toHaveLength(expectedLinks.length);
+      links.forEach((link) => {
+        expect(expectedLinks).toContainEqual(link);
+      });
+    });
 
-  //   test("should extract embedded wiki links", () => {
-  //     const source = "![[My File.png]]]]";
-  //     const expectedLinks = [
-  //       {
-  //         from: "abc/foobar.md",
-  //         to: "abc/My File.png",
-  //         toRaw: "My File.png",
-  //         text: "My File.png",
-  //         embed: true,
-  //         internal: true,
-  //       },
-  //     ];
-  //     const links = extractWikiLinks("abc/foobar.md", source);
-  //     expect(links).toEqual(expectedLinks);
-  //   });
-  // });
+    test("should extract embedded wiki links", () => {
+      const source = "![[My File.png]]]]";
+      const expectedLinks = [
+        {
+          from: "abc/foobar.md",
+          to: "abc/My File.png",
+          toRaw: "My File.png",
+          text: "",
+          embed: true,
+          internal: true,
+        },
+      ];
+      const links = extractWikiLinks("abc/foobar.md", source);
+      expect(links).toEqual(expectedLinks);
+    });
+  });
 
   // TODO fix this test
   // test("should return unique links", () => {
@@ -226,7 +226,7 @@ describe("extractWikiLinks", () => {
         to: "https://example.com",
         toRaw: "https://example.com",
         text: "External Link",
-        embed: true, // Adjust this based on your requirements
+        embed: false,
         internal: false,
       },
     ];

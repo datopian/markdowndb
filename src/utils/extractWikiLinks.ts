@@ -44,7 +44,7 @@ const extractWikiLinks = (
         to: to,
         toRaw: node.url,
         text: node.children?.[0]?.value || "",
-        embed: true,
+        embed: false,
         internal: !node.url.startsWith("http"),
       };
     },
