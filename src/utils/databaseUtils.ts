@@ -7,7 +7,7 @@ import {
   File,
 } from "../lib/schema.js";
 import path from "path";
-import { WikiLink } from "./extractWikiLinks.js";
+import { WikiLink } from "./parseFile.js";
 
 export async function resetDatabaseTables(db: Knex) {
   const tableNames = [MddbFile, MddbTag, MddbFileTag, MddbLink];

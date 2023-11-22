@@ -1,4 +1,4 @@
-import { extractWikiLinks } from "./extractWikiLinks";
+import { extractWikiLinks, processAST } from "./parseFile";
 
 // TODO test for links with headings and aliases ?
 // TODO test pdf embeds
@@ -7,13 +7,17 @@ import { extractWikiLinks } from "./extractWikiLinks";
 // TODO test custom extractors
 // TODO test with other remark plugins e.g. original wiki links
 
-describe("extractWikiLinks", () => {
+const getLinksFromSource = (source: string, options?) => {
   const from = "abc/foobar.md";
+  const ast = processAST(source, options);
+  const links = extractWikiLinks(ast, { from: from, ...options });
+  return links;
+};
 
+describe("extractWikiLinks", () => {
   describe("Common Mark links", () => {
     test("should extract CommonMark links", () => {
-      const source = "[Page 1](page-1)";
-      const links = extractWikiLinks(from, source);
+      const links = getLinksFromSource("[Page 1](page-1)");
       const expectedLinks = [
         {
           from: "abc/foobar.md",
@@ -28,8 +32,7 @@ describe("extractWikiLinks", () => {
     });
 
     test("should extract CommonMark links with image extension", () => {
-      const source = "[hello](world.png)";
-      const links = extractWikiLinks(from, source);
+      const links = getLinksFromSource("[hello](world.png)");
       const expectedLinks = [
         {
           from: "abc/foobar.md",
@@ -44,8 +47,7 @@ describe("extractWikiLinks", () => {
     });
 
     test("should extract CommonMark links with non-image extension", () => {
-      const source = "[hello](world.mdx)";
-      const links = extractWikiLinks(from, source);
+      const links = getLinksFromSource("[hello](world.mdx)");
       const expectedLinks = [
         {
           from: "abc/foobar.md",
@@ -60,8 +62,7 @@ describe("extractWikiLinks", () => {
     });
 
     test("should extract CommonMark links with absolute path", () => {
-      const source = "[hello](/world)";
-      const links = extractWikiLinks(from, source);
+      const links = getLinksFromSource("[hello](/world)");
       const expectedLinks = [
         {
           from: "abc/foobar.md",
@@ -76,8 +77,7 @@ describe("extractWikiLinks", () => {
     });
 
     test("should extract CommonMark image links", () => {
-      const source = "![hello](world.png)";
-      const links = extractWikiLinks(from, source);
+      const links = getLinksFromSource("![hello](world.png)");
       const expectedLinks = [
         {
           from: "abc/foobar.md",
@@ -92,8 +92,7 @@ describe("extractWikiLinks", () => {
     });
 
     test("should extract CommonMark image links without alt text", () => {
-      const source = "![](world.png)";
-      const links = extractWikiLinks(from, source);
+      const links = getLinksFromSource("![](world.png)");
       const expectedLinks = [
         {
           from: "abc/foobar.md",
@@ -111,7 +110,7 @@ describe("extractWikiLinks", () => {
   // TODO Obsidian wiki links
   describe("Obsidian wiki links", () => {
     test("should extract wiki links", () => {
-      const source = "[[Page 1]] [[Page 2]] [[Page 3]]";
+      const links = getLinksFromSource("[[Page 1]] [[Page 2]] [[Page 3]]");
       const expectedLinks = [
         {
           embed: false,
@@ -138,7 +137,6 @@ describe("extractWikiLinks", () => {
           toRaw: "Page 3",
         },
       ];
-      const links = extractWikiLinks("abc/foobar.md", source);
       expect(links).toHaveLength(expectedLinks.length);
       links.forEach((link) => {
         expect(expectedLinks).toContainEqual(link);
@@ -146,7 +144,14 @@ describe("extractWikiLinks", () => {
     });
 
     test("should extract wiki links with Obsidian-style shortest path", () => {
-      const source = "[[Page 1]] [[Page 2]] [[Page 3]]";
+      const permalinks = [
+        "/some/folder/Page 1",
+        "/some/folder/Page 2",
+        "/some/folder/Page 3",
+      ];
+      const links = getLinksFromSource("[[Page 1]] [[Page 2]] [[Page 3]]", {
+        permalinks,
+      });
       const expectedLinks = [
         {
           embed: false,
@@ -173,12 +178,6 @@ describe("extractWikiLinks", () => {
           toRaw: "/some/folder/Page 3",
         },
       ];
-      const permalinks = [
-        "/some/folder/Page 1",
-        "/some/folder/Page 2",
-        "/some/folder/Page 3",
-      ];
-      const links = extractWikiLinks("abc/foobar.md", source, { permalinks });
       expect(links).toHaveLength(expectedLinks.length);
       links.forEach((link) => {
         expect(expectedLinks).toContainEqual(link);
@@ -186,7 +185,7 @@ describe("extractWikiLinks", () => {
     });
 
     test("should extract embedded wiki links", () => {
-      const source = "![[My File.png]]]]";
+      const links = getLinksFromSource("![[My File.png]]]]");
       const expectedLinks = [
         {
           from: "abc/foobar.md",
@@ -197,7 +196,6 @@ describe("extractWikiLinks", () => {
           internal: true,
         },
       ];
-      const links = extractWikiLinks("abc/foobar.md", source);
       expect(links).toEqual(expectedLinks);
     });
   });
@@ -218,8 +216,7 @@ describe("extractWikiLinks", () => {
   // });
 
   test("should extract external links", () => {
-    const source = "[External Link](https://example.com)";
-    const links = extractWikiLinks("abc/foobar.md", source);
+    const links = getLinksFromSource("[External Link](https://example.com)");
     const expectedLinks = [
       {
         from: "abc/foobar.md",
@@ -234,14 +231,12 @@ describe("extractWikiLinks", () => {
   });
 
   test("should return empty array if no links are found", () => {
-    const source = "No links here";
-    const links = extractWikiLinks(from, source);
+    const links = getLinksFromSource("No links here");
     expect(links).toHaveLength(0);
   });
 
   test("should return empty array if page is empty", () => {
-    const source = "";
-    const links = extractWikiLinks(from, source);
+    const links = getLinksFromSource("");
     expect(links).toHaveLength(0);
   });
 });
