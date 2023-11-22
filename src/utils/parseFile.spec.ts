@@ -20,10 +20,38 @@ describe("parseFile", () => {
       tags: ["a", "b", "c"],
     };
     const expectedLinks = [
-      { linkType: "normal", linkSrc: "Some Link" },
-      { linkType: "normal", linkSrc: "blog/Some Other Link" },
-      { linkType: "normal", linkSrc: "blog/Some Other Link" },
-      { linkType: "embed", linkSrc: "Some Image.png" },
+      {
+        embed: false,
+        from: "",
+        internal: true,
+        text: "",
+        to: "Some Link",
+        toRaw: "Some Link",
+      },
+      {
+        embed: false,
+        from: "",
+        internal: true,
+        text: "",
+        to: "blog/Some Other Link",
+        toRaw: "blog/Some Other Link",
+      },
+      {
+        embed: false,
+        from: "",
+        internal: true,
+        text: "",
+        to: "blog/Some Other Link",
+        toRaw: "blog/Some Other Link",
+      },
+      {
+        embed: true,
+        from: "",
+        internal: true,
+        text: "",
+        to: "Some Image.png",
+        toRaw: "Some Image.png",
+      },
     ];
     const { metadata, links } = parseFile(source);
     expect(metadata).toEqual(expectedMetadata);
@@ -37,10 +65,38 @@ describe("parseFile", () => {
       tags: ["a", "b", "c"],
     };
     const expectedLinks = [
-      { linkType: "normal", linkSrc: "/some/folder/Some Link" },
-      { linkType: "normal", linkSrc: "/some/folder/blog/Some Other Link" },
-      { linkType: "normal", linkSrc: "/some/folder/blog/Some Other Link" },
-      { linkType: "embed", linkSrc: "/some/folder/Some Image.png" },
+      {
+        embed: false,
+        from: "",
+        internal: true,
+        text: "",
+        to: "some/folder/Some Link",
+        toRaw: "/some/folder/Some Link",
+      },
+      {
+        embed: false,
+        from: "",
+        internal: true,
+        text: "",
+        to: "some/folder/blog/Some Other Link",
+        toRaw: "/some/folder/blog/Some Other Link",
+      },
+      {
+        embed: false,
+        from: "",
+        internal: true,
+        text: "",
+        to: "some/folder/blog/Some Other Link",
+        toRaw: "/some/folder/blog/Some Other Link",
+      },
+      {
+        embed: true,
+        from: "",
+        internal: true,
+        text: "",
+        to: "some/folder/Some Image.png",
+        toRaw: "/some/folder/Some Image.png",
+      },
     ];
     const permalinks = [
       "/some/folder/Some Link",
