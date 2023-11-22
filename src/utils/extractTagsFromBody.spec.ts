@@ -1,114 +1,108 @@
-import { extractTagsFromBody } from "./extractTagsFromBody";
+import { extractTagsFromBody, processAST } from "./parseFile";
+
+const getTagsFromSource = (source: string) => {
+  const ast = processAST(source, {});
+  const tags = extractTagsFromBody(ast);
+  return tags;
+};
 
 describe("extractTagsFromBody", () => {
   test("should extract tags from body", () => {
-    const source = "#tag";
-    const tags = extractTagsFromBody(source);
+    const tags = getTagsFromSource("#tag");
     const expectedTags = ["tag"];
     expect(tags).toEqual(expectedTags);
   });
 
   test("should extract tags from heading", () => {
-    const source = "# heading #tag";
-    const tags = extractTagsFromBody(source);
+    const tags = getTagsFromSource("# heading #tag");
     const expectedTags = ["tag"];
     expect(tags).toEqual(expectedTags);
   });
 
   test("should extract 2 tags from heading", () => {
-    const source = "# heading #tag #tag2";
-    const tags = extractTagsFromBody(source);
+    const tags = getTagsFromSource("# heading #tag #tag2");
     const expectedTags = ["tag", "tag2"];
     expect(tags).toEqual(expectedTags);
   });
 
   test("should extract tags from body text", () => {
-    const source = "This is a #tag in the body text.";
-    const tags = extractTagsFromBody(source);
+    const tags = getTagsFromSource("This is a #tag in the body text.");
     const expectedTags = ["tag"];
     expect(tags).toEqual(expectedTags);
   });
 
   test("should extract 2 tags from body text", () => {
-    const source = "This is #tag1 and #tag2 in the body text.";
-    const tags = extractTagsFromBody(source);
+    const tags = getTagsFromSource("This is #tag1 and #tag2 in the body text.");
     const expectedTags = ["tag1", "tag2"];
     expect(tags).toEqual(expectedTags);
   });
 
   test("should extract tags from both heading and body text", () => {
-    const source = `# head #tag 
-    in heading and also in the #tag-body body text.`;
-    const tags = extractTagsFromBody(source);
+    const tags = getTagsFromSource(`# head #tag 
+    in heading and also in the #tag-body body text.`);
     const expectedTags = ["tag", "tag-body"];
     expect(tags).toEqual(expectedTags);
   });
 
   test("should extract tags with numbers", () => {
-    const source = "This is #tag123 with numbers.";
-    const tags = extractTagsFromBody(source);
+    const tags = getTagsFromSource("This is #tag123 with numbers.");
     const expectedTags = ["tag123"];
     expect(tags).toEqual(expectedTags);
   });
 
   test("should extract tags with special characters", () => {
-    const source =
-      "This is #special-tag #special_tag2 with special characters.";
-    const tags = extractTagsFromBody(source);
+    const tags = getTagsFromSource(
+      "This is #special-tag #special_tag2 with special characters."
+    );
     const expectedTags = ["special-tag", "special_tag2"];
     expect(tags).toEqual(expectedTags);
   });
 
   test("should extract tags with slash", () => {
-    const source = "This is #tag/with/slash.";
-    const tags = extractTagsFromBody(source);
+    const tags = getTagsFromSource("This is #tag/with/slash.");
     const expectedTags = ["tag/with/slash"];
     expect(tags).toEqual(expectedTags);
   });
 
   test("should extract tags with multiple tags in a line", () => {
-    const source = "#tag1 #tag2 #tag3";
-    const tags = extractTagsFromBody(source);
+    const tags = getTagsFromSource("#tag1 #tag2 #tag3");
     const expectedTags = ["tag1", "tag2", "tag3"];
     expect(tags).toEqual(expectedTags);
   });
 
   // for now we will pass the body content only not the whole source
   test("shouldn't extract frontmatter tags", () => {
-    const content = `
+    const tags = getTagsFromSource(`
     No tags in this content.
     #gr3
-    `;
-    const tags = extractTagsFromBody(content);
+    `);
     const expectedTags: string[] = ["gr3"];
     expect(tags).toEqual(expectedTags);
   });
 
   test("should extract tags from multiline text", () => {
-    const source = `This is a multiline text with #tag1 and #tag2.
+    const tags =
+      getTagsFromSource(`This is a multiline text with #tag1 and #tag2.
       Multiple tags on different lines: 
       #tag3
       #tag4
       And another tag: #tag5.
-    `;
-    const tags = extractTagsFromBody(source);
+    `);
     const expectedTags: string[] = ["tag1", "tag2", "tag3", "tag4", "tag5"];
     expect(tags).toEqual(expectedTags);
   });
 
   test("should handle multiple tags in the same line", () => {
-    const source = `#tag1 #tag2 #tag3
-      #tag4 #tag5`;
-    const tags = extractTagsFromBody(source);
+    const tags = getTagsFromSource(`#tag1 #tag2 #tag3
+      #tag4 #tag5`);
     const expectedTags: string[] = ["tag1", "tag2", "tag3", "tag4", "tag5"];
     expect(tags).toEqual(expectedTags);
   });
 
   test("should handle tags with numbers and slashes in multiline text", () => {
-    const source = `Tags with numbers: #tag123 and #tag456.
+    const tags = getTagsFromSource(`Tags with numbers: #tag123 and #tag456.
       Tags with slashes: #tag/one and #tag/two/three.
-    `;
-    const tags = extractTagsFromBody(source);
+    `);
     const expectedTags: string[] = [
       "tag123",
       "tag456",
@@ -119,10 +113,10 @@ describe("extractTagsFromBody", () => {
   });
 
   test("should handle tags with special characters in multiline text", () => {
-    const source = `Tags with special characters: #special-tag and #tag$percent.
+    const tags =
+      getTagsFromSource(`Tags with special characters: #special-tag and #tag$percent.
       Another tag: #tag_with_underscore.
-    `;
-    const tags = extractTagsFromBody(source);
+    `);
     const expectedTags: string[] = [
       "special-tag",
       "tag",
@@ -132,17 +126,15 @@ describe("extractTagsFromBody", () => {
   });
 
   test("should handle edge case with no tags in multiline text", () => {
-    const source = `No tags in this multiline content.
+    const tags = getTagsFromSource(`No tags in this multiline content.
       Another line without tags.
-    `;
-    const tags = extractTagsFromBody(source);
+    `);
     const expectedTags: string[] = [];
     expect(tags).toEqual(expectedTags);
   });
 
   test("should handle edge case with no tags", () => {
-    const source = "No tags in this content.";
-    const tags = extractTagsFromBody(source);
+    const tags = getTagsFromSource("No tags in this content.");
     const expectedTags: string[] = [];
     expect(tags).toEqual(expectedTags);
   });

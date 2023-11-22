@@ -1,11 +1,13 @@
 import matter from "gray-matter";
-import { extractWikiLinks } from "./extractWikiLinks.js";
-import { extractTagsFromBody } from "./extractTagsFromBody.js";
+import markdown from "remark-parse";
+import { Plugin, unified } from "unified";
+import { selectAll } from "unist-util-select";
+import * as path from "path";
+import gfm from "remark-gfm";
+import remarkWikiLink from "@portaljs/remark-wiki-link";
+import { Root } from "remark-parse/lib";
 
-export function parseFile(
-  source: string,
-  options?: { from?: string; permalinks?: string[] }
-) {
+export function parseFile(source: string, options?: ParsingOptions) {
   // Metadata
   const { data: metadata } = matter(source);
 
@@ -14,19 +16,143 @@ export function parseFile(
     metadata.tags = metadata.tags.split(",").map((tag: string) => tag.trim());
   }
 
-  const bodyTags = extractTagsFromBody(source);
+  const ast = processAST(source, options);
+
+  const bodyTags = extractTagsFromBody(ast);
   metadata.tags = metadata.tags ? [...metadata.tags, ...bodyTags] : bodyTags;
 
   // Links
-  const links = extractWikiLinks(options?.from || "", source, {
-    permalinks: options?.permalinks,
-  });
+  const links = extractWikiLinks(ast, options);
 
   return {
     metadata,
     links,
   };
 }
+
+export function processAST(source: string, options?: ParsingOptions) {
+  const userRemarkPlugins: Array<Plugin> = options?.remarkPlugins || [];
+
+  const processor = unified()
+    .use(markdown)
+    .use([
+      gfm,
+      [
+        remarkWikiLink,
+        { pathFormat: "obsidian-short", permalinks: options?.permalinks },
+      ],
+      ...(userRemarkPlugins || []),
+    ]);
+
+  const ast = processor.parse(source);
+  return ast;
+}
+
+export interface ParsingOptions {
+  from?: string;
+  remarkPlugins?: Array<Plugin>; // remark plugins that add custom nodes to the AST
+  extractors?: LinkExtractors; // mapping from custom node types (e.g. added by above plugins) to functions that should handle them
+  permalinks?: string[];
+}
+
+export const extractTagsFromBody = (ast: Root) => {
+  let tags: string[] = [];
+
+  const nodes = selectAll("*", ast);
+  for (let index = 0; index < nodes.length; index++) {
+    const node: any = nodes[index];
+    if (node.value) {
+      const textTags = node.value.match(/(?:^|\s)(#(\w+|\/|-|_)+)/g);
+      if (textTags) {
+        tags = tags.concat(textTags.map((tag: string) => tag.trim().slice(1))); // Extract tags and remove the '#'
+      }
+    }
+  }
+
+  return tags;
+};
+
+export interface LinkExtractors {
+  [test: string]: (node: any) => WikiLink;
+}
+
+export interface WikiLink {
+  from: string;
+  to: string;
+  toRaw: string; // raw link to
+  text: string;
+  embed: boolean; // is it an embed link (default: false)
+  internal: boolean; // default true (external means http etc - not inside the contentbase)
+}
+
+export const extractWikiLinks = (ast: Root, options?: ParsingOptions) => {
+  let wikiLinks: WikiLink[] = [];
+  const from = options?.from || "";
+  const userExtractors: LinkExtractors = options?.extractors || {};
+  const directory = path.dirname(from);
+
+  const extractors: LinkExtractors = {
+    link: (node: any) => {
+      const to = !node.url.startsWith("http")
+        ? path.posix.join(directory, node.url)
+        : node.url;
+      return {
+        from: from,
+        to: to,
+        toRaw: node.url,
+        text: node.children?.[0]?.value || "",
+        embed: false,
+        internal: !node.url.startsWith("http"),
+      };
+    },
+    image: (node: any) => ({
+      from: from,
+      to: path.posix.join(directory, node.url),
+      toRaw: node.url,
+      text: node.alt || "",
+      embed: true,
+      internal: !node.url.startsWith("http"),
+    }),
+    wikiLink: (node) => {
+      const linkType = node.data.isEmbed ? "embed" : "normal";
+      let linkSrc = "";
+      let text = "";
+
+      if (node.data.hName === "img" || node.data.hName === "iframe") {
+        linkSrc = node.data.hProperties.src;
+        text = node.children?.[0]?.value || "";
+      } else if (node.data.hName === "a") {
+        linkSrc = node.data.hProperties.href;
+        text = node.children?.[0]?.value || "";
+      } else {
+        linkSrc = node.data.permalink;
+        text = node.children?.[0]?.value || "";
+      }
+      const to = !linkSrc.startsWith("http")
+        ? path.posix.join(directory, linkSrc)
+        : linkSrc;
+
+      return {
+        from: from,
+        to: to,
+        toRaw: linkSrc,
+        text,
+        embed: linkType === "embed",
+        internal: !linkSrc.startsWith("http"),
+      };
+    },
+    ...userExtractors,
+  };
+
+  Object.entries(extractors).forEach(([test, extractor]) => {
+    const nodes = selectAll(test, ast);
+    const extractedWikiLinks: WikiLink[] = nodes.map((node) => extractor(node));
+    wikiLinks = wikiLinks.concat(extractedWikiLinks);
+  });
+
+  // const uniqueLinks = [...new Set(allLinks)];
+  return wikiLinks;
+};
 
 // links = extractWikiLinks({
 //   source,
