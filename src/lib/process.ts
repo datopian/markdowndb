@@ -59,7 +59,7 @@ export function processFile(
 
   fileInfo.url_path = pathToUrlResolver(relativePath);
   fileInfo.metadata = metadata;
-  fileInfo.links = links.map((link) => ({ ...link, from: relativePath }));
+  fileInfo.links = links;
 
   const filetype = metadata?.type || null;
   fileInfo.filetype = filetype;

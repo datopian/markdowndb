@@ -71,10 +71,13 @@ const extractWikiLinks = (
         linkSrc = node.data.permalink;
         text = node.children?.[0]?.value || "";
       }
+      const to = !linkSrc.startsWith("http")
+        ? path.posix.join(directory, linkSrc)
+        : linkSrc;
 
       return {
         from: from,
-        to: linkSrc,
+        to: to,
         toRaw: linkSrc,
         text,
         embed: linkType === "embed",
