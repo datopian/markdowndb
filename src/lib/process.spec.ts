@@ -15,6 +15,7 @@ describe("Can parse a file and get file info", () => {
     );
 
     expect(fileInfo.file_path).toBe(fullPath);
+    expect(fileInfo.url_path).toBe("index.mdx");
     expect(fileInfo.extension).toBe("mdx");
     expect(fileInfo.tags).toEqual(["tag1", "tag2", "tag3"]);
     expect(fileInfo.metadata).toEqual({
@@ -23,7 +24,7 @@ describe("Can parse a file and get file info", () => {
     });
     expect(fileInfo.links).toEqual([
       {
-        embed: true,
+        embed: false,
         from: "index.mdx",
         internal: true,
         text: "link",
