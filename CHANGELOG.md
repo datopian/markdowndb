@@ -1,5 +1,13 @@
 # mddb
 
+## 0.4.0
+
+### Minor Changes
+
+- [#61](https://github.com/datopian/markdowndb/pull/61) [`f6fe5b0`](https://github.com/datopian/markdowndb/commit/f6fe5b0899700462360e864c231473be99df91b0) Thanks [@mohamedsalem401](https://github.com/mohamedsalem401)! - Add Tags Extraction from Markdown Content.
+  Resolved issues with link extraction from Markdown documents.
+  Conducted code refactoring for improved readability and maintainability.
+
 ## 0.3.0
 
 ### Minor Changes
