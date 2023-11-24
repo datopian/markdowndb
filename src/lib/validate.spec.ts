@@ -1,4 +1,4 @@
-import { areUniqueObjectsByKey } from "../lib/validate";
+import { areUniqueObjectsByKey } from "./validate";
 
 describe("areUniqueObjectsByKey", () => {
   test("should return true if all objects have unique values for the given key", () => {

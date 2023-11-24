@@ -1,4 +1,4 @@
-import { extractTagsFromBody, processAST } from "../lib/parseFile";
+import { extractTagsFromBody, processAST } from "./parseFile";
 
 const getTagsFromSource = (source: string) => {
   const ast = processAST(source, {});

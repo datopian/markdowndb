@@ -1,4 +1,4 @@
-import { processFile } from "../lib/process";
+import { processFile } from "./process";
 import Path from "path";
 
 describe("Can parse a file and get file info", () => {

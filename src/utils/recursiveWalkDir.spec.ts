@@ -1,4 +1,4 @@
-import { recursiveWalkDir } from "../lib/recursiveWalkDir";
+import { recursiveWalkDir } from "./recursiveWalkDir";
 
 describe("recursiveWalkDir", () => {
   const contentFixturePath = "__mocks__/content/blog";

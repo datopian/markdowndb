@@ -1,4 +1,4 @@
-import { parseFile } from "../lib/parseFile";
+import { parseFile } from "./parseFile";
 
 const source = `---
 title: Hello World

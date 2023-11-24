@@ -30,7 +30,6 @@ export function parseFile(source: string, options?: ParsingOptions) {
   };
 }
 
-// Exported for testing
 export function processAST(source: string, options?: ParsingOptions) {
   const userRemarkPlugins: Array<Plugin> = options?.remarkPlugins || [];
 
