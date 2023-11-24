@@ -2,9 +2,8 @@ import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 
-import { parseFile } from "../utils/index.js";
 import { File } from "./schema.js";
-import { WikiLink } from "../utils/parseFile.js";
+import { WikiLink, parseFile } from "./parseFile.js";
 
 export interface FileInfo extends File {
   tags: string[];

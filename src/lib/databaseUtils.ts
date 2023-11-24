@@ -5,7 +5,7 @@ import {
   MddbLink,
   MddbFileTag,
   File,
-} from "../lib/schema.js";
+} from "./schema.js";
 import path from "path";
 import { WikiLink } from "./parseFile.js";
 

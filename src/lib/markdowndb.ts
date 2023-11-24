@@ -10,7 +10,7 @@ import {
   isLinkToDefined,
   mapFileTagsToInsert,
   getUniqueValues,
-} from "../utils/databaseUtils.js";
+} from "./databaseUtils.js";
 
 const defaultFilePathToUrl = (filePath: string) => {
   let url = filePath

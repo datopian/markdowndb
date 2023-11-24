@@ -1,4 +1,4 @@
-import { extractWikiLinks, processAST } from "./parseFile";
+import { extractWikiLinks, processAST } from "../lib/parseFile";
 
 // TODO test for links with headings and aliases ?
 // TODO test pdf embeds
