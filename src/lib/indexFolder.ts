@@ -1,5 +1,5 @@
-import { recursiveWalkDir } from "../utils/index.js";
 import { FileInfo, processFile } from "./process.js";
+import { recursiveWalkDir } from "./recursiveWalkDir.js";
 
 export function indexFolder(
   folderPath: string,
