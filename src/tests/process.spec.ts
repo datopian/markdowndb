@@ -21,6 +21,20 @@ describe("Can parse a file and get file info", () => {
     expect(fileInfo.metadata).toEqual({
       title: "Homepage",
       tags: ["tag1", "tag2", "tag3"],
+      tasks: [
+        {
+          checked: false,
+          description: "uncompleted task 2",
+        },
+        {
+          checked: true,
+          description: "completed task 1",
+        },
+        {
+          checked: true,
+          description: "completed task 2",
+        },
+      ],
     });
     expect(fileInfo.links).toEqual([
       {
