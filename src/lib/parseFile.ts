@@ -182,7 +182,7 @@ export const extractTasks = (ast: Root) => {
   return tasks;
 };
 
-function recursivelyExtractText(node) {
+function recursivelyExtractText(node: any) {
   if (node.value) {
     return node.value;
   } else if (node.children) {
