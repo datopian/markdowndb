@@ -24,6 +24,9 @@ export function parseFile(source: string, options?: ParsingOptions) {
   // Links
   const links = extractWikiLinks(ast, options);
 
+  const tasks = extractTasks(ast);
+  metadata.tasks = tasks;
+
   return {
     metadata,
     links,
@@ -154,6 +157,40 @@ export const extractWikiLinks = (ast: Root, options?: ParsingOptions) => {
   // const uniqueLinks = [...new Set(allLinks)];
   return wikiLinks;
 };
+
+export interface Task {
+  description: string;
+  checked: boolean;
+}
+
+export const extractTasks = (ast: Root) => {
+  const nodes = selectAll("*", ast);
+  const tasks: Task[] = [];
+  nodes.map((node: any) => {
+    if (node.type === "listItem") {
+      const description = recursivelyExtractText(node).trim();
+      const checked = node.checked;
+      if (checked !== null && checked !== undefined) {
+        tasks.push({
+          description,
+          checked,
+        });
+      }
+    }
+  });
+
+  return tasks;
+};
+
+function recursivelyExtractText(node: any) {
+  if (node.value) {
+    return node.value;
+  } else if (node.children) {
+    return node.children.map(recursivelyExtractText).join(" ");
+  } else {
+    return "";
+  }
+}
 
 // links = extractWikiLinks({
 //   source,

@@ -1,11 +1,5 @@
 import { Knex } from "knex";
-import {
-  MddbFile,
-  MddbTag,
-  MddbLink,
-  MddbFileTag,
-  File,
-} from "./schema.js";
+import { MddbFile, MddbTag, MddbLink, MddbFileTag, File } from "./schema.js";
 import path from "path";
 import { WikiLink } from "./parseFile.js";
 

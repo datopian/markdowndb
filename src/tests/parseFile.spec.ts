@@ -10,6 +10,8 @@ tags: a, b, c
 [[blog/Some Other Link]]
 [[blog/Some Other Link|Page Alias]]
 ![[Some Image.png]]
+- [ ] uncompleted task
+- [x] completed task
 `;
 
 describe("parseFile", () => {
@@ -18,6 +20,10 @@ describe("parseFile", () => {
       title: "Hello World",
       authors: ["John Doe", "Jane Doe"],
       tags: ["a", "b", "c"],
+      tasks: [
+        { description: "uncompleted task", checked: false },
+        { description: "completed task", checked: true },
+      ],
     };
     const expectedLinks = [
       {
@@ -63,6 +69,10 @@ describe("parseFile", () => {
       title: "Hello World",
       authors: ["John Doe", "Jane Doe"],
       tags: ["a", "b", "c"],
+      tasks: [
+        { description: "uncompleted task", checked: false },
+        { description: "completed task", checked: true },
+      ],
     };
     const expectedLinks = [
       {
