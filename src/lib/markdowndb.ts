@@ -194,7 +194,7 @@ export class MarkdownDB {
   }
 }
 
-function writeJsonToFile(filePath, jsonData) {
+function writeJsonToFile(filePath: string, jsonData: any[]) {
   try {
     const directory = path.dirname(filePath);
     if (!fs.existsSync(directory)) {
@@ -203,7 +203,7 @@ function writeJsonToFile(filePath, jsonData) {
 
     const jsonString = JSON.stringify(jsonData, null, 2);
     fs.writeFileSync(filePath, jsonString);
-  } catch (error) {
-    console.error(`Error writing data to ${filePath}: ${error.message}`);
+  } catch (error: any) {
+    console.error(`Error writing data to ${filePath}: ${error}`);
   }
 }
