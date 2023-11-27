@@ -170,7 +170,7 @@ export const extractTasks = (ast: Root) => {
     if (node.type === "listItem") {
       const description = recursivelyExtractText(node).trim();
       const checked = node.checked;
-      if (checked !== null) {
+      if (checked !== null && checked !== undefined) {
         tasks.push({
           description,
           checked,
