@@ -1,5 +1,12 @@
 # mddb
 
+## 0.5.0
+
+### Minor Changes
+
+- [#71](https://github.com/datopian/markdowndb/pull/71) [`6a8a952`](https://github.com/datopian/markdowndb/commit/6a8a9525c90f3d4160d412f3929922b1e2df354b) Thanks [@mohamedsalem401](https://github.com/mohamedsalem401)! - [ #60 , extract tasks ]
+  Add tasks extraction from files. e.g `- [ ] task`
+
 ## 0.4.0
 
 ### Minor Changes
