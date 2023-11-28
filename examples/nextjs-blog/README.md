@@ -7,8 +7,8 @@ This tutorial guides you through creating a simple Next.js-based blog using Mark
 Begin by creating a Next.js project. If Next.js is not installed, execute the following command:
 
 ```bash
-npx create-next-app my-blog
-cd my-blog
+npx create-next-app nextjs-blog
+cd nextjs-blog
 ```
 
 ## Step 2: Create a Folder for Blog Posts
