@@ -1,5 +1,11 @@
 # mddb
 
+## 0.6.0
+
+### Minor Changes
+
+- [#73](https://github.com/datopian/markdowndb/pull/73) [`aedd641`](https://github.com/datopian/markdowndb/commit/aedd6413a7eee41a0d710c477ba55996c43b3e0f) Thanks [@mohamedsalem401](https://github.com/mohamedsalem401)! - [ #53 , JSON output option ] Implemented functionality to write file JSON output to disk
+
 ## 0.5.0
 
 ### Minor Changes

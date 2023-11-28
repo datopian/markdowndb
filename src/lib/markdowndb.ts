@@ -11,6 +11,7 @@ import {
   mapFileTagsToInsert,
   getUniqueValues,
 } from "./databaseUtils.js";
+import fs from "fs";
 
 const defaultFilePathToUrl = (filePath: string) => {
   let url = filePath
@@ -76,6 +77,7 @@ export class MarkdownDB {
       .filter(isLinkToDefined);
     const fileTagsToInsert = fileObjects.flatMap(mapFileTagsToInsert);
 
+    writeJsonToFile(".markdowndb/files.json", fileObjects);
     await MddbFile.batchInsert(this.db, filesToInsert);
     await MddbTag.batchInsert(this.db, tagsToInsert);
     await MddbFileTag.batchInsert(this.db, fileTagsToInsert);
@@ -189,5 +191,19 @@ export class MarkdownDB {
 
   _destroyDb() {
     this.db.destroy();
+  }
+}
+
+function writeJsonToFile(filePath: string, jsonData: any[]) {
+  try {
+    const directory = path.dirname(filePath);
+    if (!fs.existsSync(directory)) {
+      fs.mkdirSync(directory, { recursive: true });
+    }
+
+    const jsonString = JSON.stringify(jsonData, null, 2);
+    fs.writeFileSync(filePath, jsonString);
+  } catch (error: any) {
+    console.error(`Error writing data to ${filePath}: ${error}`);
   }
 }
