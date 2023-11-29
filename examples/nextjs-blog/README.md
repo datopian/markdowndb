@@ -16,16 +16,15 @@ cd nextjs-blog
 Establish a folder to store your blog posts within your project. For instance:
 
 ```bash
-mkdir content
-cd content
+mkdir src/content
+cd src/content
 ```
 
 Inside the content folder, create three sample blog posts using markdown, such as:
 
 ```bash
-- post-1.md
-- post-2.md
-- post-3.md
+- embracing-minimalism.md
+- remote-work-productivity.md
 ```
 
 ## Step 3: Index Markdown Files into SQLite Database
@@ -36,26 +35,7 @@ After preparing markdown files, store their metadata in a database using the Mar
 npx mddb ./content
 ```
 
-This command generates a markdown.db file in the execution directory, alongside your project structure.
-
-```plaintext
-.
-├── markdown.db
-└── content
-    ├── post-1.md
-    ├── post-2.md
-    └── post-3.md
-```
-
-## Step 4: Explore the SQLite Database
-
-Explore the SQLite database using a viewer like [SQLite Browser](https://sqlitebrowser.org/). The database contains tables such as 'files,' 'file_tags,' 'links,' and 'tags,' storing metadata, tags, links, and tag information, respectively.
-
-Additionally, install the `mddb` package:
-
-```bash
-npm install mddb
-```
+## step 4: move `.markdowndb` folder with `files.json` to the src directory
 
 ## Step 5: Load Blog Posts Using MarkdownDB
 
@@ -64,59 +44,102 @@ Create a file for your blog listing page, e.g., `pages/blog.js`. Use the followi
 **Component 1: BlogList**
 
 ```jsx
-// BlogList.js
-import { useEffect, useState } from "react";
-import { MarkdownDB } from "markdowndb";
+// blog-list.js
+import Link from "next/link";
 
-const BlogList = () => {
-  const [posts, setPosts] = useState([]);
-
-  useEffect(() => {
-    const loadPosts = async () => {
-      const mdDB = new MarkdownDB();
-      await mdDB.init();
-      await mdDB.indexFolder("./content");
-
-      // Load all blog posts
-      const blogPosts = await mdDB.getFiles("./content");
-      setPosts(blogPosts);
-    };
-
-    loadPosts();
-  }, []);
+const BlogPostsList = ({ posts }) => {
+  if (!posts || !Array.isArray(posts)) {
+    return (
+      <div>
+        <h2>No Blog Posts Available</h2>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <h1>Blog Posts</h1>
+      <h2>Blog Posts</h2>
       <ul>
         {posts.map((post) => (
-          <li key={post._id}>{post.title}</li>
+          <li key={post.id}>
+            <Link href={`/blog/${post.url_path}`}>
+              <h3>{post.metadata.title}</h3>
+            </Link>
+          </li>
         ))}
       </ul>
     </div>
   );
 };
 
-export default BlogList;
+export default BlogPostsList;
 ```
+
+Create a file for your blog page, `pages/blog/[url_path].js`. Use the following code snippet:
 
 **Component 2: BlogItem**
 
 ```jsx
-// BlogItem.js
-import React from "react";
+import ReactMarkdown from "react-markdown";
+import fs from "fs";
+import path from "path";
 
-const BlogItem = ({ post }) => {
-  // Customize the display of individual blog items
+const BlogPost = ({ post }) => {
+  const removeMetadata = (content) => {
+    // Assuming metadata is between '---' at the beginning of the content
+    const metadataRegex = /^---[\s\S]*?---/;
+    return content.replace(metadataRegex, "");
+  };
+
   return (
     <div>
-      <h2>{post.title}</h2>
-      <p>{post.content}</p>
+      <h1>{post.metadata.title}</h1>
+      <ul>
+        <li>
+          <strong>Tags:</strong> {post.tags.join(", ")}
+        </li>
+      </ul>
+      <div>
+        <ReactMarkdown>{removeMetadata(post.content)}</ReactMarkdown>
+      </div>
     </div>
   );
 };
 
-export default BlogItem;
+export async function getStaticPaths() {
+  const filePath = path.join(process.cwd(), "src/.markdowndb/files.json");
+  const fileContent = fs.readFileSync(filePath, "utf-8");
+  const posts = JSON.parse(fileContent);
+
+  // Generate paths for all posts
+  const paths = posts.map((post) => ({
+    params: { url_path: post.url_path },
+  }));
+
+  return { paths, fallback: false };
+}
+
+export async function getStaticProps({ params }) {
+  const filePath = path.join(process.cwd(), "src/.markdowndb/files.json");
+  const jsonContent = fs.readFileSync(filePath, "utf-8");
+  const posts = JSON.parse(jsonContent);
+  const post = posts.find((post) => post.url_path === params.url_path);
+
+  const contentPath = path.join(
+    process.cwd(),
+    `src/content/${params.url_path}.md`
+  );
+  const content = fs.readFileSync(contentPath, "utf-8");
+  post.content = content;
+
+  return {
+    props: {
+      post,
+    },
+  };
+}
+
+export default BlogPost;
 ```
 
 ## Step 6: Run Your Next.js App
