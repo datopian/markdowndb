@@ -1,19 +1,23 @@
-import Head from 'next/head'
-import styles from '@/styles/Home.module.css'
-import BlogPostsList from "./blog-list"
 import fs from "fs"
+import Link from 'next/link';
+import styles from '@/styles/Home.module.css'
 
 export default function Home({ posts }) {
   return (
     <>
-      <Head>
-        <title>Markdowndb blog</title>
-        <meta name="description" content="Made by Markdowndb" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <main className={styles.main}>
-        <BlogPostsList posts={posts} />
+        <div>
+          <h2>Blog Posts</h2>
+          <ul>
+            {posts.map((post) => (
+              <li key={post._id}>
+                <Link href={`/blog/${post.url_path}`}>
+                  <h3>{post.metadata.title}</h3>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </main>
     </>
   )

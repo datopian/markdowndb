@@ -4,7 +4,7 @@ This tutorial guides you through creating a simple Next.js-based blog using Mark
 
 ## Step 1: Set Up a Next.js Project
 
-Begin by creating a Next.js project. If Next.js is not installed, execute the following command:
+Begin by creating a Next.js project. If Next.js is not installed, execute the following command, and make sure to include Tailwind:
 
 ```bash
 npx create-next-app nextjs-blog
@@ -20,7 +20,7 @@ mkdir src/content
 cd src/content
 ```
 
-Inside the content folder, create three sample blog posts using markdown, such as:
+Inside the content folder, create two sample blog posts using markdown, such as:
 
 ```bash
 - embracing-minimalism.md
@@ -35,111 +35,51 @@ After preparing markdown files, store their metadata in a database using the Mar
 npx mddb ./content
 ```
 
-## step 4: move `.markdowndb` folder with `files.json` to the src directory
+## Step 4: Move `.markdowndb` Folder with `files.json` to the src Directory
 
 ## Step 5: Load Blog Posts Using MarkdownDB
 
-Create a file for your blog listing page, e.g., `pages/blog.js`. Use the following code snippet:
+Edit `pages/index.js`. Use the following code snippet:
 
 **Component 1: BlogList**
 
 ```jsx
-// blog-list.js
-import Link from "next/link";
-
-const BlogPostsList = ({ posts }) => {
-  if (!posts || !Array.isArray(posts)) {
-    return (
-      <div>
-        <h2>No Blog Posts Available</h2>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <h2>Blog Posts</h2>
-      <ul>
-        {posts.map((post) => (
-          <li key={post.id}>
-            <Link href={`/blog/${post.url_path}`}>
-              <h3>{post.metadata.title}</h3>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-export default BlogPostsList;
-```
-
-Create a file for your blog page, `pages/blog/[url_path].js`. Use the following code snippet:
-
-**Component 2: BlogItem**
-
-```jsx
-import ReactMarkdown from "react-markdown";
 import fs from "fs";
-import path from "path";
+import Link from "next/link";
+import styles from "@/styles/Home.module.css";
 
-const BlogPost = ({ post }) => {
-  const removeMetadata = (content) => {
-    // Assuming metadata is between '---' at the beginning of the content
-    const metadataRegex = /^---[\s\S]*?---/;
-    return content.replace(metadataRegex, "");
-  };
-
+export default function Home({ posts }) {
   return (
-    <div>
-      <h1>{post.metadata.title}</h1>
-      <ul>
-        <li>
-          <strong>Tags:</strong> {post.tags.join(", ")}
-        </li>
-      </ul>
-      <div>
-        <ReactMarkdown>{removeMetadata(post.content)}</ReactMarkdown>
-      </div>
-    </div>
+    <>
+      <main className={styles.main}>
+        <div>
+          <h2>Blog Posts</h2>
+          <ul>
+            {posts.map((post) => (
+              <li key={post._id}>
+                <Link href={`/blog/${post.url_path}`}>
+                  <h3>{post.metadata.title}</h3>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </main>
+    </>
   );
-};
+}
 
-export async function getStaticPaths() {
-  const filePath = path.join(process.cwd(), "src/.markdowndb/files.json");
+export async function getStaticProps() {
+  const filePath = "src/.markdowndb/files.json";
   const fileContent = fs.readFileSync(filePath, "utf-8");
   const posts = JSON.parse(fileContent);
 
-  // Generate paths for all posts
-  const paths = posts.map((post) => ({
-    params: { url_path: post.url_path },
-  }));
-
-  return { paths, fallback: false };
-}
-
-export async function getStaticProps({ params }) {
-  const filePath = path.join(process.cwd(), "src/.markdowndb/files.json");
-  const jsonContent = fs.readFileSync(filePath, "utf-8");
-  const posts = JSON.parse(jsonContent);
-  const post = posts.find((post) => post.url_path === params.url_path);
-
-  const contentPath = path.join(
-    process.cwd(),
-    `src/content/${params.url_path}.md`
-  );
-  const content = fs.readFileSync(contentPath, "utf-8");
-  post.content = content;
-
   return {
     props: {
-      post,
+      posts,
     },
   };
 }
-
-export default BlogPost;
 ```
 
 ## Step 6: Run Your Next.js App
@@ -153,3 +93,12 @@ npm run dev
 Visit http://localhost:3000/blog to see your blog posts listed.
 
 Congratulations! You've successfully created a simple Next.js blog using MarkdownDB. Explore more features and customize your blog as needed.
+
+**Flag:** While `mddb` may not offer significantly more than manual handling, it stands out as a straightforward, extensively tested, and lightweight library.
+
+**Additional Features:**
+
+- **Tag Querying:** Easily retrieve tags from all files, streamlining organization and categorization.
+- **Backward/Forward Links:** Establish links for enhanced file interconnectivity and navigation.
+- **Custom Field Calculation:** Automatically calculate custom fields based on file content, reducing manual effort.
+- **Schema Validation:** Ensure file adherence to a predefined schema for data integrity.
