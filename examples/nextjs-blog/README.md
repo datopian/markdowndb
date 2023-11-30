@@ -41,7 +41,7 @@ npx mddb ./content
 
 Edit `pages/index.js`. Use the following code snippet:
 
-**Component 1: BlogList**
+### Component 1: BlogList
 
 ```jsx
 import fs from "fs";
@@ -92,9 +92,10 @@ Visit http://localhost:3000/blog to see your blog posts listed.
 
 Congratulations! You've successfully created a simple Next.js blog using MarkdownDB. Explore more features and customize your blog as needed.
 
-**Flag:** While `mddb` may not offer significantly more than manual handling, it stands out as a straightforward, extensively tested, and lightweight library.
 
-**Additional Features:**
+### Flag: While `mddb` may not offer significantly more than manual handling, it stands out as a straightforward, extensively tested, and lightweight library.
+
+### Additional Features:
 
 - **Tag Querying:** Easily retrieve tags from all files, streamlining organization and categorization.
 - **Backward/Forward Links:** Establish links for enhanced file interconnectivity and navigation.
