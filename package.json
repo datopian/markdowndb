@@ -13,6 +13,7 @@
     "pretest": "npm run build && node ./dist/src/bin/index.js ./__mocks__/content",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "build": "tsc --p tsconfig.lib.json",
+    "watch": "tsc --p tsconfig.lib.json --watch",
     "changeset": "changeset",
     "prepublishOnly": "npm run build",
     "release": "changeset publish"

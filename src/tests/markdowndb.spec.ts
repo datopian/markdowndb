@@ -2,6 +2,7 @@
 import { MarkdownDB } from "../lib/markdowndb";
 import { recursiveWalkDir } from "../lib/recursiveWalkDir";
 import { File, MddbFile, Table } from "../lib/schema";
+import path from "path";
 
 /**
  * @jest-environment node
@@ -73,7 +74,7 @@ describe("MarkdownDB - default config", () => {
         `${pathToContentFixture}/blog/blog3.mdx`,
         `${pathToContentFixture}/blog/blog2.mdx`,
         `${pathToContentFixture}/blog0.mdx`,
-      ];
+      ].map(normalizePathSeparator);
 
       expect(dbFilesPaths).toHaveLength(expectedPaths.length);
       dbFilesPaths.forEach((p) => {
@@ -88,7 +89,7 @@ describe("MarkdownDB - default config", () => {
       const expectedPaths = [
         `${pathToContentFixture}/blog/blog3.mdx`,
         `${pathToContentFixture}/blog/blog2.mdx`,
-      ];
+      ].map(normalizePathSeparator);
 
       expect(dbFilesPaths).toHaveLength(expectedPaths.length);
       dbFilesPaths.forEach((p) => {
@@ -102,7 +103,7 @@ describe("MarkdownDB - default config", () => {
 
       const expectedPaths = [
         `${pathToContentFixture}/assets/datopian-logo.png`,
-      ];
+      ].map(normalizePathSeparator);
 
       expect(dbFilesPaths).toHaveLength(expectedPaths.length);
       dbFilesPaths.forEach((p) => {
@@ -119,7 +120,7 @@ describe("MarkdownDB - default config", () => {
       const expectedPaths = [
         `${pathToContentFixture}/blog/blog1.mdx`,
         `${pathToContentFixture}/blog/blog2.mdx`,
-      ];
+      ].map(normalizePathSeparator);
 
       expect(dbFilesPaths).toHaveLength(expectedPaths.length);
       dbFilesPaths.forEach((p) => {
@@ -133,7 +134,7 @@ describe("MarkdownDB - default config", () => {
       });
       const dbFilesPaths = dbFiles.map((f) => f.file_path);
 
-      const expectedPaths = [`${pathToContentFixture}/blog/blog1.mdx`];
+      const expectedPaths = [`${pathToContentFixture}/blog/blog1.mdx`].map(normalizePathSeparator);
 
       expect(dbFilesPaths).toHaveLength(expectedPaths.length);
       dbFilesPaths.forEach((p) => {
@@ -147,7 +148,7 @@ describe("MarkdownDB - default config", () => {
       });
       const dbFilesPaths = dbFiles.map((f) => f.file_path);
 
-      const expectedPaths = [`${pathToContentFixture}/blog/blog2.mdx`];
+      const expectedPaths = [`${pathToContentFixture}/blog/blog2.mdx`].map(normalizePathSeparator);
 
       expect(dbFilesPaths).toHaveLength(expectedPaths.length);
       dbFilesPaths.forEach((p) => {
@@ -162,7 +163,7 @@ describe("MarkdownDB - default config", () => {
         extensions: ["md", "mdx"],
       });
       const dbFilesPaths = dbFiles.map((f) => f.file_path);
-      const expectedPaths = [`${pathToContentFixture}/news/news1.mdx`];
+      const expectedPaths = [`${pathToContentFixture}/news/news1.mdx`].map(normalizePathSeparator);
 
       expect(dbFilesPaths).toHaveLength(expectedPaths.length);
       dbFilesPaths.forEach((p) => {
@@ -324,3 +325,8 @@ describe("MarkdownDB - custom config", () => {
     });
   });
 });
+
+function normalizePathSeparator(filePath: string): string {
+  // Use path.sep to dynamically determine the path separator based on the OS
+  return filePath.split("/").join(path.sep);
+}

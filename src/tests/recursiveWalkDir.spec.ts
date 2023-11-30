@@ -1,4 +1,5 @@
 import { recursiveWalkDir } from "../lib/recursiveWalkDir";
+import path from "path";
 
 describe("recursiveWalkDir", () => {
   const contentFixturePath = "__mocks__/content/blog";
@@ -12,7 +13,7 @@ describe("recursiveWalkDir", () => {
     `${contentFixturePath}/blog3.mdx`,
     `${contentFixturePath}/blog2.mdx`,
     `${contentFixturePath}/blog1.mdx`,
-  ];
+  ].map(normalizePathSeparator);
 
   test("should return all files in a directory", async () => {
     const paths = recursiveWalkDir(contentFixturePath);
@@ -23,3 +24,8 @@ describe("recursiveWalkDir", () => {
     });
   });
 });
+
+function normalizePathSeparator(filePath: string): string {
+  // Use path.sep to dynamically determine the path separator based on the OS
+  return filePath.split("/").join(path.sep);
+}
