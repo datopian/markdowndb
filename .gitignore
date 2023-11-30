@@ -4,3 +4,4 @@ dist/
 markdown.db
 *.tgz
 .markdowndb/
+.next/
