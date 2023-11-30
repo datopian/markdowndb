@@ -1,11 +1,9 @@
 import fs from "fs"
-import Link from 'next/link';
-import styles from '@/styles/Home.module.css'
 
 export default function Home({ posts }) {
   return (
     <>
-      <main className={styles.main}>
+      <main>
         <div>
           <h2>Blog Posts</h2>
           <ul>

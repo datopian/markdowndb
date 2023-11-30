@@ -1,5 +1,5 @@
 ---
-title: The-Art-of-Remote-Work-Productivity
+title: The Art of Remote Work Productivity
 date: 2023-11-29
 tags: remote work, productivity, work-from-home
 ---

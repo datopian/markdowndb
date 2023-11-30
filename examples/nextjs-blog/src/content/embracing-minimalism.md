@@ -1,5 +1,5 @@
 ---
-title: Embracing-Minimalism-in-Everyday-Life
+title: Embracing Minimalism in Everyday Life
 date: 2023-11-29
 tags: minimalism, lifestyle, simplicity
 ---
