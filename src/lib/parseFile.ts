@@ -98,7 +98,9 @@ export const extractWikiLinks = (ast: Root, options?: ParsingOptions) => {
   const extractors: LinkExtractors = {
     link: (node: any) => {
       const to = !node.url.startsWith("http")
-        ? path.posix.join(directory, node.url)
+        ? node.url.startsWith("/")
+          ? node.url.slice(1)
+          : path.posix.join(directory, node.url)
         : node.url;
       return {
         from: from,
@@ -111,7 +113,9 @@ export const extractWikiLinks = (ast: Root, options?: ParsingOptions) => {
     },
     image: (node: any) => ({
       from: from,
-      to: path.posix.join(directory, node.url),
+      to: node.url.startsWith("/")
+        ? node.url.slice(1)
+        : path.posix.join(directory, node.url),
       toRaw: node.url,
       text: node.alt || "",
       embed: true,
@@ -133,7 +137,9 @@ export const extractWikiLinks = (ast: Root, options?: ParsingOptions) => {
         text = node.children?.[0]?.value || "";
       }
       const to = !linkSrc.startsWith("http")
-        ? path.posix.join(directory, linkSrc)
+        ? linkSrc.startsWith("/")
+          ? linkSrc.slice(1)
+          : path.posix.join(directory, linkSrc)
         : linkSrc;
 
       return {
