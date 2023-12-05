@@ -1,6 +1,7 @@
 # MarkdownDB
 
 [![](https://badgen.net/npm/v/mddb)](https://www.npmjs.com/package/mddb)
+[![](https://dcbadge.vercel.app/api/server/EeyfGrGu4U)](https://discord.gg/EeyfGrGu4U)
 
 MarkdownDB is a javascript library that turns markdown files into structured queryable data. Build rich markdown-powered sites easily and reliably. Specifically it:
 
@@ -14,12 +15,13 @@ MarkdownDB is a javascript library that turns markdown files into structured que
   - [x] SQL(ite) index **v0.2**
   - [x] JSON index **v0.6**
   - [ ] BONUS Index multiple folders (with support for configuring e.g. prefixing in some way e.g. i have all my blog files in this separate folder over here)
+  - [x] Configuration for Including/Excluding Files in the folder
 
 Extract structured data like:
 
 - [x] **Frontmatter metadata**: Extract markdown frontmatter and add in a metadata field
   - [ ] deal with casting types e.g. string, number so that we can query in useful ways e.g. find me all blog posts before date X
-- [ ] **Tags**: Extracts tags in markdown pages
+- [x] **Tags**: Extracts tags in markdown pages
   - [x] Extract tags in frontmatter **v0.1**
   - [x] Extract tags in body like `#abc` **v0.5**
 - [x] **Links**: links between files like `[hello](abc.md)` or wikilink style `[[xyz]]` so we can compute backlinks or deadlinks etc (see #4) **v0.2**
@@ -27,9 +29,9 @@ Extract structured data like:
 
 Data enhancement and validation
 
-- [ ] 🚧 **Computed fields**: add new metadata properties based on existing metadata e.g. a slug field computed from title field; or, adding a title based on the first h1 heading in a doc; or, a type field based on the folder of the file (e.g. these are blog posts). cf https://www.contentlayer.dev/docs/reference/source-files/define-document-type#computedfields. #54 🚧
-- [ ] 🚧 **Data validation and Document Types**: validate metadata against a schema/type so that I know the data in the database is "valid" #55 
-  - [ ]  BYOT (bring your own types): i want to create my own types ... so that when i get an object out it is cast to the right typescript type
+- [x] 🚧 **Computed fields**: add new metadata properties based on existing metadata e.g. a slug field computed from title field; or, adding a title based on the first h1 heading in a doc; or, a type field based on the folder of the file (e.g. these are blog posts). cf https://www.contentlayer.dev/docs/reference/source-files/define-document-type#computedfields. #54 🚧
+- [ ] 🚧 **Data validation and Document Types**: validate metadata against a schema/type so that I know the data in the database is "valid" #55
+  - [ ] BYOT (bring your own types): i want to create my own types ... so that when i get an object out it is cast to the right typescript type
 
 ## Quick start
 
@@ -113,6 +115,70 @@ const blogs = await mddb.getFiles({
 });
 ```
 
+# Configuring `mddb.config.js`
+
+## Overview
+
+`mddb.config.js` allows you to tailor the behavior of MarkdownDB by providing various configuration options. This section outlines the available options and how to use them.
+
+### 1. Integration of Configuration Options
+
+Integrate a configuration file (`mddb.config.js`) to enhance customization options for MarkdownDB.
+
+### 2. Computed Fields
+
+Implement computed fields to dynamically calculate values based on specified logic or dependencies.
+
+### 3. File Inclusion/Exclusion Patterns
+
+MarkdownDB supports configuring include and exclude file glob patterns, providing flexibility similar to the approach used in Next.js/TypeScript.
+
+### 4. Initializing Configuration Using CLI
+
+To initialize the MarkdownDB configuration file, use the following CLI command:
+
+```bash
+npx markdowndb init
+```
+
+## `mddb.config.js` Structure
+
+```javascript
+// mddb.config.js
+
+export interface CustomConfig {
+  customFields?: ((fileInfo: FileInfo, ast: Root) => any)[];
+  include?: string[];
+  exclude?: string[];
+}
+```
+
+## Example Configuration
+
+Here's an example `mddb.config.js` with custom configurations:
+
+```javascript
+// mddb.config.js
+
+import { CustomConfig } from "mddb";
+
+const customConfig: CustomConfig = {
+  customFields: [
+    (fileInfo, ast) => {
+      // Your custom logic here
+      fileInfo.slug = fileInfo.slug.toUpperCase();
+    },
+    // Add more custom fields as needed
+  ],
+  include: ["docs/**/*.md"], // Include only specific files or directories matching this pattern
+  exclude: ["drafts/**/*.md"], // Exclude specific files or directories
+};
+
+export default customConfig;
+```
+
+Feel free to customize the configuration based on your project requirements.
+
 ### (Optional) Index your files in a `prebuild` script
 
 ```json
@@ -137,41 +203,40 @@ For example, in your Next.js project's pages, you could do:
 import React from "react";
 import clientPromise from "@/lib/mddb.mjs";
 
-
 export default function Blog({ blogs }) {
-    return (
-        <div>
-            <h1>Blog</h1>
-            <ul>
-                {blogs.map((blog) => (
-                    <li key={blog.id}>
-                        <a href={blog.url_path}>{blog.title}</a>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
+  return (
+    <div>
+      <h1>Blog</h1>
+      <ul>
+        {blogs.map((blog) => (
+          <li key={blog.id}>
+            <a href={blog.url_path}>{blog.title}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export const getStaticProps = async () => {
-    const mddb = await clientPromise;
-    // get all files that are not marked as draft in the frontmatter
-    const blogFiles = await mddb.getFiles({
-        frontmatter: {
-            draft: false
-        }
-    });
+  const mddb = await clientPromise;
+  // get all files that are not marked as draft in the frontmatter
+  const blogFiles = await mddb.getFiles({
+    frontmatter: {
+      draft: false,
+    },
+  });
 
-    const blogsList = blogFiles.map(({ metadata, url_path }) => ({
-        ...metadata,
-        url_path,
-    }));
+  const blogsList = blogFiles.map(({ metadata, url_path }) => ({
+    ...metadata,
+    url_path,
+  }));
 
-    return {
-        props: {
-            blogs: blogsList,
-        },
-    };
+  return {
+    props: {
+      blogs: blogsList,
+    },
+  };
 };
 ```
 
@@ -240,12 +305,12 @@ At them moment, only exact matches are supported. However, `false` values do not
 
 ```ts
 mddb.getFiles({
-	frontmatter: {
-		key1: "value1",
-		key2: true,
-		key3: 123,
-		key4: ["a", "b", "c"] // this will match exactly ["a", "b", "c"]
-	}
+  frontmatter: {
+    key1: "value1",
+    key2: true,
+    key3: 123,
+    key4: ["a", "b", "c"], // this will match exactly ["a", "b", "c"]
+  },
 });
 ```
 
