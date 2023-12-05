@@ -31,7 +31,13 @@ async function initConfigFile(configFilePath = "mddb.config.js") {
 // TODO get these from markdowndb.config.js or something
 const dbPath = "markdown.db";
 const ignorePatterns = [/Excalidraw/, /\.obsidian/, /DS_Store/];
-const [command, contentPath, configFilePath] = process.argv.slice(2);
+let command, contentPath, configFilePath;
+
+if (process.argv[2] === 'init') {
+  [command, contentPath, configFilePath] = process.argv.slice(2);
+} else {
+  [contentPath, configFilePath] = process.argv.slice(2);
+}
 
 if (command === 'init') {
   await initConfigFile(configFilePath);
