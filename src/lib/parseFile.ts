@@ -28,6 +28,7 @@ export function parseFile(source: string, options?: ParsingOptions) {
   metadata.tasks = tasks;
 
   return {
+    ast,
     metadata,
     links,
   };

@@ -12,6 +12,7 @@ import {
   getUniqueValues,
 } from "./databaseUtils.js";
 import fs from "fs";
+import { CustomConfig } from "./CustomConfig.js";
 
 const defaultFilePathToUrl = (filePath: string) => {
   let url = filePath
@@ -40,14 +41,40 @@ const resolveLinkToUrlPath = (link: string, sourceFilePath?: string) => {
  */
 export class MarkdownDB {
   config: Knex.Config;
+  customConfig: CustomConfig = {};
+  //@ts-ignore
   db: Knex;
 
   /**
    * Constructs a new MarkdownDB instance.
-   * @param {Knex.Config} config - Knex configuration object.
+   * @param {Knex.Config} knexConfig - Knex configuration object.
+   * @param {CustomConfig} [customConfig] - Custom configuration object.
    */
-  constructor(config: Knex.Config) {
-    this.config = config;
+  constructor(
+    knexConfig: Knex.Config,
+    options?: { customConfig?: CustomConfig; configFilePath?: string }
+  ) {
+    this.config = knexConfig;
+    if (options?.customConfig) {
+      this.customConfig = options.customConfig;
+    } else {
+      this.loadConfiguration(options?.configFilePath || "mddb.config.js");
+    }
+  }
+
+  private async loadConfiguration(configFilePath: string) {
+    const normalizedPath = path.resolve(configFilePath);
+    const fileUrl = new URL(`file://${normalizedPath}`);
+
+    try {
+      // Import the module using the file URL
+      const configModule = await import(fileUrl.href);
+      this.customConfig = configModule.default;
+    } catch (error: any) {
+      throw new Error(
+        `Error loading configuration file from ${normalizedPath}: ${error.message}`
+      );
+    }
   }
 
   /**
@@ -82,6 +109,7 @@ export class MarkdownDB {
     const fileObjects = indexFolder(
       folderPath,
       pathToUrlResolver,
+      this.customConfig,
       ignorePatterns
     );
     const filesToInsert = fileObjects.map(mapFileToInsert);

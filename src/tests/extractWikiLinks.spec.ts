@@ -1,4 +1,4 @@
-import { extractWikiLinks, processAST } from "../lib/parseFile";
+import { ParsingOptions, extractWikiLinks, processAST } from "../lib/parseFile";
 
 // TODO test for links with headings and aliases ?
 // TODO test pdf embeds
@@ -7,7 +7,7 @@ import { extractWikiLinks, processAST } from "../lib/parseFile";
 // TODO test custom extractors
 // TODO test with other remark plugins e.g. original wiki links
 
-const getLinksFromSource = (source: string, options?) => {
+const getLinksFromSource = (source: string, options?: ParsingOptions) => {
   const from = "abc/foobar.md";
   const ast = processAST(source, options);
   const links = extractWikiLinks(ast, { from: from, ...options });
