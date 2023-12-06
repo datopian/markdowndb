@@ -63,7 +63,7 @@ export class MarkdownDB {
   }
 
   private async loadConfiguration(configFilePath?: string) {
-    const normalizedPath = path.resolve(configFilePath || "mddb.config.js");
+    const normalizedPath = path.resolve(configFilePath || "markdowndb.config.js");
     const fileUrl = new URL(`file://${normalizedPath}`);
 
     try {

@@ -18,5 +18,5 @@
     "src/**/*.spec.ts",
     "src/**/*.test.ts"
   ],
-  "include": ["**/*.js", "**/*.ts", "mddb.config.js"]
+  "include": ["**/*.js", "**/*.ts", "markdowndb.config.js"]
 }

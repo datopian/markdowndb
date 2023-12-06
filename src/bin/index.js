@@ -3,7 +3,7 @@ import * as path from 'path';
 import { MarkdownDB } from "../lib/markdowndb.js";
 
 async function loadConfig(configFilePath) {
-  const normalizedPath = path.resolve(configFilePath || 'mddb.config.js');
+  const normalizedPath = path.resolve(configFilePath || 'markdowndb.config.js');
   const fileUrl = new URL(`file://${normalizedPath}`);
 
   try {
