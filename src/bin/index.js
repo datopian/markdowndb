@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 import * as path from 'path';
-import { promises as fs } from 'fs';
 import { MarkdownDB } from "../lib/markdowndb.js";
 
 async function loadConfig(configFilePath) {
-  const normalizedPath = path.resolve(configFilePath);
+  const normalizedPath = path.resolve(configFilePath || 'mddb.config.js');
   const fileUrl = new URL(`file://${normalizedPath}`);
 
   try {
-    // Import the module using the file URL
+    // Import the module using the file URL 
     const configModule = await import(fileUrl.href);
     return configModule.default;
   } catch (error) {
-    throw new Error(`Error loading configuration file from ${normalizedPath}: ${error.message}`);
+    if (configFilePath) {
+      throw new Error(`Error loading configuration file from ${normalizedPath}: ${error.message}`);
+    }
   }
 }
 
@@ -26,7 +27,7 @@ if (!contentPath) {
 }
 
 // Load the configuration file dynamically
-const config = await loadConfig(configFilePath || 'mddb.config.js');
+const config = await loadConfig(configFilePath);
 
 const client = new MarkdownDB({
   client: "sqlite3",

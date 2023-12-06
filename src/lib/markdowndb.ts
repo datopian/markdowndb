@@ -58,12 +58,12 @@ export class MarkdownDB {
     if (options?.customConfig) {
       this.customConfig = options.customConfig;
     } else {
-      this.loadConfiguration(options?.configFilePath || "mddb.config.js");
+      this.loadConfiguration(options?.configFilePath);
     }
   }
 
-  private async loadConfiguration(configFilePath: string) {
-    const normalizedPath = path.resolve(configFilePath);
+  private async loadConfiguration(configFilePath?: string) {
+    const normalizedPath = path.resolve(configFilePath || "mddb.config.js");
     const fileUrl = new URL(`file://${normalizedPath}`);
 
     try {
@@ -71,9 +71,11 @@ export class MarkdownDB {
       const configModule = await import(fileUrl.href);
       this.customConfig = configModule.default;
     } catch (error: any) {
-      throw new Error(
-        `Error loading configuration file from ${normalizedPath}: ${error.message}`
-      );
+      if (configFilePath) {
+        throw new Error(
+          `Error loading configuration file from ${normalizedPath}: ${error.message}`
+        );
+      }
     }
   }
 
