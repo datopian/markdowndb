@@ -29,7 +29,7 @@ Extract structured data like:
 
 Data enhancement and validation
 
-- [x] 🚧 **Computed fields**: add new metadata properties based on existing metadata e.g. a slug field computed from title field; or, adding a title based on the first h1 heading in a doc; or, a type field based on the folder of the file (e.g. these are blog posts). cf https://www.contentlayer.dev/docs/reference/source-files/define-document-type#computedfields. #54 🚧
+- [x] **Computed fields**: add new metadata properties based on existing metadata e.g. a slug field computed from title field; or, adding a title based on the first h1 heading in a doc; or, a type field based on the folder of the file (e.g. these are blog posts). cf https://www.contentlayer.dev/docs/reference/source-files/define-document-type#computedfields.
 - [ ] 🚧 **Data validation and Document Types**: validate metadata against a schema/type so that I know the data in the database is "valid" #55
   - [ ] BYOT (bring your own types): i want to create my own types ... so that when i get an object out it is cast to the right typescript type
 
@@ -115,69 +115,26 @@ const blogs = await mddb.getFiles({
 });
 ```
 
-# Configuring `mddb.config.js`
+# Configuring `markdowndb.config.js`
 
-## Overview
-
-`mddb.config.js` allows you to tailor the behavior of MarkdownDB by providing various configuration options. This section outlines the available options and how to use them.
-
-### 1. Integration of Configuration Options
-
-Integrate a configuration file (`mddb.config.js`) to enhance customization options for MarkdownDB.
-
-### 2. Computed Fields
-
-Implement computed fields to dynamically calculate values based on specified logic or dependencies.
-
-### 3. File Inclusion/Exclusion Patterns
-
-MarkdownDB supports configuring include and exclude file glob patterns, providing flexibility similar to the approach used in Next.js/TypeScript.
-
-### 4. Initializing Configuration Using CLI
-
-To initialize the MarkdownDB configuration file, use the following CLI command:
-
-```bash
-npx markdowndb init
-```
-
-## `mddb.config.js` Structure
-
-```javascript
-// mddb.config.js
-
-export interface CustomConfig {
-  customFields?: ((fileInfo: FileInfo, ast: Root) => any)[];
-  include?: string[];
-  exclude?: string[];
-}
-```
+- Implement computed fields to dynamically calculate values based on specified logic or dependencies.
+- Specify the patterns for including or excluding files in MarkdownDB.
 
 ## Example Configuration
 
-Here's an example `mddb.config.js` with custom configurations:
+Here's an example `markdowndb.config.js` with custom configurations:
 
 ```javascript
-// mddb.config.js
-
-import { CustomConfig } from "mddb";
-
-const customConfig: CustomConfig = {
+export default {
   customFields: [
     (fileInfo, ast) => {
       // Your custom logic here
-      fileInfo.slug = fileInfo.slug.toUpperCase();
     },
-    // Add more custom fields as needed
   ],
-  include: ["docs/**/*.md"], // Include only specific files or directories matching this pattern
-  exclude: ["drafts/**/*.md"], // Exclude specific files or directories
+  include: ["docs/**/*.md"], // Include only files matching this pattern
+  exclude: ["drafts/**/*.md"], // Exclude those files matching this pattern
 };
-
-export default customConfig;
 ```
-
-Feel free to customize the configuration based on your project requirements.
 
 ### (Optional) Index your files in a `prebuild` script
 
