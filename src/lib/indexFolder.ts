@@ -1,9 +1,11 @@
+import { CustomConfig } from "./CustomConfig.js";
 import { FileInfo, processFile } from "./process.js";
 import { recursiveWalkDir } from "./recursiveWalkDir.js";
 
 export function indexFolder(
   folderPath: string,
   pathToUrlResolver: (filePath: string) => string,
+  config: CustomConfig,
   ignorePatterns?: RegExp[]
 ) {
   const filePathsToIndex = recursiveWalkDir(folderPath);
@@ -11,12 +13,14 @@ export function indexFolder(
     shouldIncludeFile(filePath, ignorePatterns)
   );
   const files: FileInfo[] = [];
+  const computedFields = config.computedFields || [];
   for (const filePath of filteredFilePathsToIndex) {
     const fileObject = processFile(
       folderPath,
       filePath,
       pathToUrlResolver,
-      filePathsToIndex
+      filePathsToIndex,
+      computedFields
     );
     files.push(fileObject);
   }

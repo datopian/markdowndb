@@ -115,18 +115,49 @@ const blogs = await mddb.getFiles({
 });
 ```
 
-# Configuring `markdowndb.config.js`
+## Computed Fields
+
+This feature helps you define functions that compute additional fields you want to include.
+
+### Step 1: Define the Computed Field Function
+
+Next, define a function that computes the additional field you want to include. In this example, we have a function named `addTitle` that extracts the title from the first heading in the AST (Abstract Syntax Tree) of a Markdown file.
+
+```javascript
+const addTitle = (fileInfo, ast) => {
+  // Find the first header node in the AST
+  const headerNode = ast.children.find((node) => node.type === "heading");
+
+  // Extract the text content from the header node
+  const title = headerNode
+    ? headerNode.children.map((child) => child.value).join("")
+    : "";
+
+  // Add the title property to the fileInfo
+  fileInfo.title = title;
+};
+```
+
+### Step 2: Indexing the Folder with Computed Fields
+
+Now, use the `client.indexFolder` method to scan and index the folder containing your Markdown files. Pass the `addTitle` function in the `computedFields` option array to include the computed title in the database.
+
+```javascript
+client.indexFolder(folderPath: "PATH_TO_FOLDER", customConfig: { computedFields: [addTitle] });
+```
+
+## Configuring `markdowndb.config.js`
 
 - Implement computed fields to dynamically calculate values based on specified logic or dependencies.
 - Specify the patterns for including or excluding files in MarkdownDB.
 
-## Example Configuration
+### Example Configuration
 
 Here's an example `markdowndb.config.js` with custom configurations:
 
 ```javascript
 export default {
-  customFields: [
+  computedFields: [
     (fileInfo, ast) => {
       // Your custom logic here
     },
