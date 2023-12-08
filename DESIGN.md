@@ -10,7 +10,7 @@ module.exports = {
   schemas: z.object({
     post: {
       date: z.string().refine((value) => /\d{4}-\d{2}-\d{2}/.test(value), {
-        message: "Invalid date format. Please use YYYY-MM-DD.",
+        message: "Invalid date format. Please use YYYY-MM-DD format for the 'date' field.",
       }),
       // Add more fields as needed, each with its own validation rules
       // Example:
@@ -27,10 +27,11 @@ module.exports = {
 };
 ```
 
-In this example, the `post` schema is defined using Zod's `object` method, specifying the structure of the content. The `date` field is required and must adhere to the specified date format using Zod's `string` and `refine` methods for custom validation.
-
 ### How Validation Works
 
-When you load a Markdown file using MarkdownDB, it automatically validates the content against the defined schema using Zod. If the validation fails for any field, MarkdownDB will throw an error, providing detailed error messages. This helps you quickly identify and rectify issues, ensuring your Markdown content adheres to the specified structure and validation rules.
+In this example, the `post` schema is defined using Zod's `object` method, specifying the structure of the content. Each field within the schema, such as `date`, is assigned validation rules using Zod's methods, ensuring data integrity.
 
-Feel free to extend the schema by adding more fields and their respective validation rules as needed for your specific use case. This flexibility allows you to define complex structures and ensure the integrity of your data.
+When MarkdownDB loads a Markdown file, it automatically validates the content against the defined schema using Zod. If any field fails validation, MarkdownDB throws an error with a detailed message indicating the specific issue. For instance:
+
+- If the date has an invalid format, it throws an error like this: `Error: In 'blog.md' for the 'post' schema. Invalid date format. Please use YYYY-MM-DD format for the 'date' field.`
+- If a required field is missing, it throws an error like this: `Error: Missing 'date' field in 'blog.md' for the 'post' schema.`
