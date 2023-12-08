@@ -2,41 +2,38 @@
 
 [![](https://badgen.net/npm/v/mddb)](https://www.npmjs.com/package/mddb)
 
-MarkdownDB is a javascript library for treating markdown files as a database -- as a "MarkdownDB". Specifically, it:
+MarkdownDB is a javascript library that turns markdown files into structured queryable data. Build rich markdown-powered sites easily and reliably. Specifically it:
 
-- Parses your markdown files to extract structured data (frontmatter, tags etc) and creates an index in a local SQLite database
-- Provides a lightweight javascript API for querying the database and importing files into your application
-
-**🚧 MarkdownDB is in its early development stage**
+- Parses your markdown files to extract structured data (frontmatter, tags etc) and builds a queryable index either in JSON files or a local SQLite database
+- Provides a lightweight javascript API for querying the index and using the data files into your application
 
 ## Features and Roadmap
 
 - [x] **Index a folder of files** - create a db index given a folder of markdown and other files
+  - [x] **Command line tool for indexing**: Create a markdowndb (index) on the command line **v0.1**
+  - [x] SQL(ite) index **v0.2**
+  - [x] JSON index **v0.6**
   - [ ] BONUS Index multiple folders (with support for configuring e.g. prefixing in some way e.g. i have all my blog files in this separate folder over here)
-  - [x] **Command line tool for indexing**: Create a markdowndb (index) on the command line
-  - [ ] SQL(ite) index
-  - [ ] JSON index
 
 Extract structured data like:
 
 - [x] **Frontmatter metadata**: Extract markdown frontmatter and add in a metadata field
-  - [ ] deal with nested frontmatter (? what does this mean?)
   - [ ] deal with casting types e.g. string, number so that we can query in useful ways e.g. find me all blog posts before date X
 - [ ] **Tags**: Extracts tags in markdown pages
-  - [x] Extract tags in frontmatter
-  - [ ] Extract tags in body like `#abc`
-- [ ] **Links**: links between files like `[hello](abc.md)` or wikilink style `[[xyz]]` so we can compute backlinks or deadlinks etc (see #4)
-- [ ] **Tasks**: extract tasks like this `- [ ] this is a task` (See obsidian data view)
+  - [x] Extract tags in frontmatter **v0.1**
+  - [x] Extract tags in body like `#abc` **v0.5**
+- [x] **Links**: links between files like `[hello](abc.md)` or wikilink style `[[xyz]]` so we can compute backlinks or deadlinks etc (see #4) **v0.2**
+- [x] **Tasks**: extract tasks like this `- [ ] this is a task` (See obsidian data view) **v0.4**
 
 Data enhancement and validation
 
-- [ ] **Computed fields**: add new metadata properties based on existing metadata e.g. a slug field computed from title field; or, adding a title based on the first h1 heading in a doc; or, a type field based on the folder of the file (e.g. these are blog posts). cf https://www.contentlayer.dev/docs/reference/source-files/define-document-type#computedfields. #54
-- [ ] **Data validation and Document Types**: validate metadata against a schema/type so that I know the data in the database is "valid" #55
+- [ ] 🚧 **Computed fields**: add new metadata properties based on existing metadata e.g. a slug field computed from title field; or, adding a title based on the first h1 heading in a doc; or, a type field based on the folder of the file (e.g. these are blog posts). cf https://www.contentlayer.dev/docs/reference/source-files/define-document-type#computedfields. #54 🚧
+- [ ] 🚧 **Data validation and Document Types**: validate metadata against a schema/type so that I know the data in the database is "valid" #55 
   - [ ]  BYOT (bring your own types): i want to create my own types ... so that when i get an object out it is cast to the right typescript type
 
 ## Quick start
 
-### You have a folder of markdown content
+### Have a folder of markdown content
 
 For example, your blog posts. Each file can have a YAML frontmatter header with metadata like title, date, tags, etc.
 

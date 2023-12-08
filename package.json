@@ -13,6 +13,7 @@
     "pretest": "npm run build && node ./dist/src/bin/index.js ./__mocks__/content",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "build": "tsc --p tsconfig.lib.json",
+    "watch": "tsc --p tsconfig.lib.json --watch",
     "changeset": "changeset",
     "prepublishOnly": "npm run build",
     "release": "changeset publish"
@@ -46,6 +47,7 @@
     "@portaljs/remark-wiki-link": "^1.0.4",
     "gray-matter": "^4.0.3",
     "knex": "^2.4.2",
+    "react-markdown": "^9.0.1",
     "remark-gfm": "^3.0.1",
     "remark-parse": "^10.0.1",
     "sqlite3": "^5.1.6",

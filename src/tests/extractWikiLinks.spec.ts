@@ -61,13 +61,28 @@ describe("extractWikiLinks", () => {
       expect(links).toEqual(expectedLinks);
     });
 
-    test("should extract CommonMark links with absolute path", () => {
-      const links = getLinksFromSource("[hello](/world)");
+    test("should extract CommonMark links with relative path", () => {
+      const links = getLinksFromSource("[hello](./world.md)");
       const expectedLinks = [
         {
           from: "abc/foobar.md",
-          to: "abc/world",
-          toRaw: "/world",
+          to: "abc/world.md",
+          toRaw: "./world.md",
+          text: "hello",
+          embed: false,
+          internal: true,
+        },
+      ];
+      expect(links).toEqual(expectedLinks);
+    });
+
+    test("should extract CommonMark links with absolute path", () => {
+      const links = getLinksFromSource("[hello](/world.md)");
+      const expectedLinks = [
+        {
+          from: "abc/foobar.md",
+          to: "world.md",
+          toRaw: "/world.md",
           text: "hello",
           embed: false,
           internal: true,
@@ -158,7 +173,7 @@ describe("extractWikiLinks", () => {
           from: "abc/foobar.md",
           internal: true,
           text: "",
-          to: "abc/some/folder/Page 1",
+          to: "some/folder/Page 1",
           toRaw: "/some/folder/Page 1",
         },
         {
@@ -166,7 +181,7 @@ describe("extractWikiLinks", () => {
           from: "abc/foobar.md",
           internal: true,
           text: "",
-          to: "abc/some/folder/Page 2",
+          to: "some/folder/Page 2",
           toRaw: "/some/folder/Page 2",
         },
         {
@@ -174,7 +189,7 @@ describe("extractWikiLinks", () => {
           from: "abc/foobar.md",
           internal: true,
           text: "",
-          to: "abc/some/folder/Page 3",
+          to: "some/folder/Page 3",
           toRaw: "/some/folder/Page 3",
         },
       ];

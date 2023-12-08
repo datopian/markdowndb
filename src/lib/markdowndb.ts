@@ -35,19 +35,38 @@ const resolveLinkToUrlPath = (link: string, sourceFilePath?: string) => {
   return resolved.slice(1);
 };
 
+/**
+ * MarkdownDB class for managing a Markdown database.
+ */
 export class MarkdownDB {
   config: Knex.Config;
   db: Knex;
 
+  /**
+   * Constructs a new MarkdownDB instance.
+   * @param {Knex.Config} config - Knex configuration object.
+   */
   constructor(config: Knex.Config) {
     this.config = config;
   }
 
+  /**
+   * Initializes the MarkdownDB instance and database connection.
+   * @returns {Promise<MarkdownDB>} - A promise resolving to the initialized MarkdownDB instance.
+   */
   async init() {
     this.db = knex({ ...this.config, useNullAsDefault: true });
     return this;
   }
 
+  /**
+   * Indexes the files in a specified folder and updates the database accordingly.
+   * @param {Object} options - Options for indexing the folder.
+   * @param {string} options.folderPath - The path of the folder to be indexed.
+   * @param {RegExp[]} [options.ignorePatterns=[]] - Array of RegExp patterns to ignore during indexing.
+   * @param {(filePath: string) => string} [options.pathToUrlResolver=defaultFilePathToUrl] - Function to resolve file paths to URLs.
+   * @returns {Promise<void>} - A promise resolving when the indexing is complete.
+   */
   async indexFolder({
     folderPath,
     // TODO support glob patterns
@@ -84,11 +103,21 @@ export class MarkdownDB {
     await MddbLink.batchInsert(this.db, getUniqueValues(linksToInsert));
   }
 
+  /**
+   * Retrieves a file from the database by its ID.
+   * @param {string} id - The ID of the file to retrieve.
+   * @returns {Promise<MddbFile | null>} - A promise resolving to the retrieved file or null if not found.
+   */
   async getFileById(id: string): Promise<MddbFile | null> {
     const file = await this.db.from("files").where("_id", id).first();
     return new MddbFile(file);
   }
 
+  /**
+   * Retrieves a file from the database by its URL.
+   * @param {string} url - The URL of the file to retrieve.
+   * @returns {Promise<MddbFile | null>} - A promise resolving to the retrieved file or null if not found.
+   */
   async getFileByUrl(url: string): Promise<MddbFile | null> {
     const file = await this.db
       .from("files")
@@ -97,6 +126,16 @@ export class MarkdownDB {
     return new MddbFile(file);
   }
 
+  /**
+   * Retrieves files from the database based on the specified query parameters.
+   * @param {Object} [query] - Query parameters for filtering files.
+   * @param {string} [query.folder] - The folder to filter files by.
+   * @param {string[]} [query.filetypes] - Array of file types to filter by.
+   * @param {string[]} [query.tags] - Array of tags to filter by.
+   * @param {string[]} [query.extensions] - Array of file extensions to filter by.
+   * @param {Record<string, string | number | boolean>} [query.frontmatter] - Object representing frontmatter key-value pairs for filtering.
+   * @returns {Promise<MddbFile[]>} - A promise resolving to an array of retrieved files.
+   */
   async getFiles(query?: {
     folder?: string;
     filetypes?: string[];
@@ -161,11 +200,23 @@ export class MarkdownDB {
     return files.map((file) => new MddbFile(file));
   }
 
+  /**
+   * Retrieves all tags from the database.
+   * @returns {Promise<MddbTag[]>} - A promise resolving to an array of retrieved tags.
+   */
   async getTags(): Promise<MddbTag[]> {
     const tags = await this.db("tags").select();
     return tags.map((tag) => new MddbTag(tag));
   }
 
+  /**
+   * Retrieves links associated with a file based on the specified query parameters.
+   * @param {Object} [query] - Query parameters for filtering links.
+   * @param {string} query.fileId - The ID of the file to retrieve links for.
+   * @param {"normal" | "embed"} [query.linkType] - Type of link to filter by (normal or embed).
+   * @param {"forward" | "backward"} [query.direction="forward"] - Direction of the link (forward or backward).
+   * @returns {Promise<MddbLink[]>} - A promise resolving to an array of retrieved links.
+   */
   async getLinks(query?: {
     fileId: string;
     linkType?: "normal" | "embed";
@@ -189,6 +240,9 @@ export class MarkdownDB {
     return links;
   }
 
+  /**
+   * Destroys the database connection.
+   */
   _destroyDb() {
     this.db.destroy();
   }
