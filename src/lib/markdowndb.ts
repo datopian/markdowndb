@@ -78,7 +78,7 @@ export class MarkdownDB {
     folderPath: string;
     ignorePatterns?: RegExp[];
     pathToUrlResolver?: (filePath: string) => string;
-    customConfig: CustomConfig;
+    customConfig?: CustomConfig;
   }) {
     await resetDatabaseTables(this.db);
 
