@@ -1,5 +1,5 @@
 ---
-"mddb": patch
+"mddb": minor
 ---
 
 [#54 Computed Fields]
