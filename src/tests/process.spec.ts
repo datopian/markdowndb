@@ -11,6 +11,7 @@ describe("Can parse a file and get file info", () => {
       pathToContentFixture,
       fullPath,
       (filePath) => filePath,
+      [],
       []
     );
 

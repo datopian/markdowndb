@@ -4,6 +4,7 @@ import path from "path";
 
 import { File } from "./schema.js";
 import { WikiLink, parseFile } from "./parseFile.js";
+import { Root } from "remark-parse/lib/index.js";
 
 export interface FileInfo extends File {
   tags: string[];
@@ -16,7 +17,8 @@ export function processFile(
   rootFolder: string,
   filePath: string,
   pathToUrlResolver: (filePath: string) => string,
-  filePathsToIndex: string[]
+  filePathsToIndex: string[],
+  computedFields: ((fileInfo: FileInfo, ast: Root) => any)[]
 ) {
   // Remove rootFolder from filePath
   const relativePath = path.relative(rootFolder, filePath);
@@ -52,7 +54,7 @@ export function processFile(
     flag: "r",
   });
 
-  const { metadata, links } = parseFile(source, {
+  const { ast, metadata, links } = parseFile(source, {
     from: relativePath,
     permalinks: filePathsToIndex,
   });
@@ -66,6 +68,10 @@ export function processFile(
 
   const tags = metadata?.tags || [];
   fileInfo.tags = tags;
+  for (let index = 0; index < computedFields.length; index++) {
+    const customFieldFunction = computedFields[index];
+    customFieldFunction(fileInfo, ast);
+  }
 
   return fileInfo;
 }

@@ -12,6 +12,7 @@ import {
   getUniqueValues,
 } from "./databaseUtils.js";
 import fs from "fs";
+import { CustomConfig } from "./CustomConfig.js";
 
 const defaultFilePathToUrl = (filePath: string) => {
   let url = filePath
@@ -72,16 +73,19 @@ export class MarkdownDB {
     // TODO support glob patterns
     ignorePatterns = [],
     pathToUrlResolver = defaultFilePathToUrl,
+    customConfig = {},
   }: {
     folderPath: string;
     ignorePatterns?: RegExp[];
     pathToUrlResolver?: (filePath: string) => string;
+    customConfig?: CustomConfig;
   }) {
     await resetDatabaseTables(this.db);
 
     const fileObjects = indexFolder(
       folderPath,
       pathToUrlResolver,
+      customConfig,
       ignorePatterns
     );
     const filesToInsert = fileObjects.map(mapFileToInsert);
