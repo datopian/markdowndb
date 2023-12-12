@@ -1,10 +1,20 @@
 # MarkdownDB Schemas Configuration Tutorial
 
-MarkdownDB empowers you to establish and enforce the structure of your Markdown content using the Zod library for schema definitions. This tutorial guides you through the process of defining schemas for a blog post, ensuring a mandatory `date` field. The schemas play a crucial role in error prevention and ensure the predicted structure in Markdown files.
+MarkdownDB enables you to establish and enforce the structure of your Markdown content using the Zod library for schema definitions. This tutorial guides you through the process of defining schemas for a blog post, ensuring a mandatory `date` field. The schemas play a crucial role in error prevention and ensure the predicted structure in Markdown files.
 
 ## Define Your Schemas
 
-Create a configuration object and use the Zod library to define your schemas. For more information on defining Zod schemas, visit [Zod Documentation - Basic Usage](https://zod.dev/?id=basic-usage). In this example, we'll begin by creating a schema for a blog post.
+Create a configuration object and use the Zod library to define your schemas. For more information on defining Zod schemas, visit [Zod Documentation - Basic Usage](https://zod.dev/?id=basic-usage).
+In this example, we'll begin by creating a schema for a blog post. For instance:
+```md
+---
+title: blog post
+date: 2023-12-05
+...
+---
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+```
 
 Subsequently, we'll use the `client.indexFolder` method along with the defined schemas to scan and index the folder containing your Markdown files.
 
@@ -12,9 +22,6 @@ Subsequently, we'll use the `client.indexFolder` method along with the defined s
 // index.js
 import { z } from "zod";
 import { MarkdownDB } from "mddb";
-
-// Code for initializing the connection
-const client = /_ Initialize your connection here _/;
 
 // Define the schemas using Zod
 const schemas = {
@@ -25,6 +32,15 @@ const schemas = {
     }),
   }),
 };
+
+// Code for initializing the connection
+const client = new MarkdownDB({
+  client: "sqlite3",
+  connection: {
+    filename: "markdown.db",
+  },
+});
+const mddb = await client.init();
 
 // Index the folder with MarkdownDB
 await client.indexFolder({
