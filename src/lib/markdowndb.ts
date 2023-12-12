@@ -2,7 +2,7 @@ import path from "path";
 import knex, { Knex } from "knex";
 
 import { MddbFile, MddbTag, MddbLink, MddbFileTag } from "./schema.js";
-import { indexFolder } from "./indexFolder.js";
+import { indexFolder, shouldIncludeFile } from "./indexFolder.js";
 import {
   resetDatabaseTables,
   mapFileToInsert,
@@ -13,6 +13,9 @@ import {
 } from "./databaseUtils.js";
 import fs from "fs";
 import { CustomConfig } from "./CustomConfig.js";
+import { FileInfo, processFile } from "./process.js";
+import chokidar from "chokidar";
+import { recursiveWalkDir } from "./recursiveWalkDir.js";
 
 const defaultFilePathToUrl = (filePath: string) => {
   let url = filePath
@@ -74,11 +77,13 @@ export class MarkdownDB {
     ignorePatterns = [],
     pathToUrlResolver = defaultFilePathToUrl,
     customConfig = {},
+    watch = false,
   }: {
     folderPath: string;
     ignorePatterns?: RegExp[];
     pathToUrlResolver?: (filePath: string) => string;
     customConfig?: CustomConfig;
+    watch?: boolean;
   }) {
     await resetDatabaseTables(this.db);
 
@@ -88,6 +93,66 @@ export class MarkdownDB {
       customConfig,
       ignorePatterns
     );
+    await this.saveDataToDisk(fileObjects);
+
+    if (watch) {
+      const watcher = chokidar.watch(folderPath, {
+        ignoreInitial: true,
+      });
+
+      const filePathsToIndex = recursiveWalkDir(folderPath);
+      const computedFields = customConfig.computedFields || [];
+
+      const handleFileEvent = (event: string, filePath: string) => {
+        if (!shouldIncludeFile(filePath, ignorePatterns)) {
+          return;
+        }
+
+        if (event === "unlink") {
+          const index = fileObjects.findIndex(
+            (obj) => obj.file_path === filePath
+          );
+          if (index !== -1) {
+            fileObjects.splice(index, 1);
+          }
+          console.log(`File ${filePath} has been removed`);
+          return;
+        }
+
+        const fileObject = processFile(
+          folderPath,
+          filePath,
+          pathToUrlResolver,
+          filePathsToIndex,
+          computedFields
+        );
+        const index = fileObjects.findIndex(
+          (obj) => obj.file_path === filePath
+        );
+
+        if (index !== -1) {
+          fileObjects[index] = fileObject;
+        } else {
+          fileObjects.push(fileObject);
+        }
+
+        console.log(
+          `File ${filePath} has been ${event === "add" ? "added" : "updated"}`
+        );
+      };
+
+      watcher
+        .on("add", (filePath) => handleFileEvent("add", filePath))
+        .on("change", (filePath) => handleFileEvent("change", filePath))
+        .on("unlink", (filePath) => handleFileEvent("unlink", filePath))
+        .on("all", () => this.saveDataToDisk(fileObjects))
+        .on("error", (error) => console.error(`Watcher error: ${error}`));
+    }
+  }
+
+  private async saveDataToDisk(fileObjects: FileInfo[]) {
+    await resetDatabaseTables(this.db);
+
     const filesToInsert = fileObjects.map(mapFileToInsert);
     const uniqueTags = getUniqueValues(
       fileObjects.flatMap((file) => file.tags)

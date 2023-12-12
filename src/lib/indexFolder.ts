@@ -27,7 +27,7 @@ export function indexFolder(
   return files;
 }
 
-function shouldIncludeFile(
+export function shouldIncludeFile(
   filePath: string,
   ignorePatterns?: RegExp[]
 ): boolean {
