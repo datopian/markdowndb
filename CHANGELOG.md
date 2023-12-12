@@ -1,5 +1,12 @@
 # mddb
 
+## 0.7.0
+
+### Minor Changes
+
+- [#86](https://github.com/datopian/markdowndb/pull/86) [`81f85f6`](https://github.com/datopian/markdowndb/commit/81f85f6c382722031f24f75e8ac822bcf91a3fa5) Thanks [@mohamedsalem401](https://github.com/mohamedsalem401)! - [#54 Computed Fields]
+  - Introduce a configuration parameter to support the inclusion of a custom function for computing fields.
+
 ## 0.6.0
 
 ### Minor Changes
