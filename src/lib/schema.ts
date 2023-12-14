@@ -25,50 +25,61 @@ interface File {
   url_path: string | null;
   filetype: string | null;
   metadata: MetaData | null;
+  [key: string]: string | null | MetaData | undefined;
 }
 
 class MddbFile {
   static table = Table.Files;
   static supportedExtensions = ["md", "mdx"];
 
-  _id: string;
-  file_path: string;
-  extension: string;
-  url_path: string | null;
-  // TODO there should be a separate table for filetypes
-  // and another one for many-to-many relationship between files and filetypes
-  filetype: string | null;
-  metadata: MetaData | null;
+  file: File = {
+    _id: "",
+    file_path: "",
+    extension: "",
+    url_path: null,
+    filetype: null,
+    metadata: null,
+  };
 
   // TODO type?
   constructor(file: any) {
-    this._id = file._id;
-    this.file_path = file.file_path;
-    this.extension = file.extension;
-    this.url_path = file.url_path;
-    this.filetype = file.filetype;
-    this.metadata = file.metadata ? JSON.parse(file.metadata) : null;
+    this.file._id = file._id;
+    this.file.file_path = file.file_path;
+    this.file.extension = file.extension;
+    this.file.url_path = file.url_path;
+    this.file.filetype = file.filetype;
+    this.file.metadata = file.metadata ? JSON.parse(file.metadata) : null;
+
+    // Assign dynamic properties using index signature to this.file
+    for (const key in file) {
+      if (
+        key !== "_id" &&
+        key !== "file_path" &&
+        key !== "extension" &&
+        key !== "url_path" &&
+        key !== "filetype" &&
+        key !== "metadata"
+      ) {
+        this.file[key] = file[key];
+      }
+    }
   }
 
   toObject(): File {
-    return {
-      _id: this._id,
-      file_path: this.file_path,
-      extension: this.extension,
-      url_path: this.url_path,
-      filetype: this.filetype,
-      metadata: this.metadata,
-    };
+    return { ...this.file };
   }
 
-  static async createTable(db: Knex) {
+  static async createTable(db: Knex, properties: string[]) {
     const creator = (table: Knex.TableBuilder) => {
       table.string("_id").primary();
-      table.string("file_path").unique().notNullable(); // Path relative to process.cwd()
-      table.string("extension").notNullable(); // File extension
-      table.string("url_path"); // Sluggfied path relative to content folder
-      table.string("filetype"); // Type field in frontmatter if it exists
-      table.string("metadata"); // All frontmatter data
+      table.string("file_path").unique().notNullable();
+      table.string("extension").notNullable();
+      table.string("url_path");
+      table.string("filetype");
+      table.string("metadata");
+      for (let index = 0; index < properties.length; index++) {
+        table.string(properties[index]);
+      }
     };
     const tableExists = await db.schema.hasTable(this.table);
 
@@ -88,14 +99,57 @@ class MddbFile {
     if (!areUniqueObjectsByKey(files, "file_path")) {
       throw new Error("Files must have unique file_path");
     }
+
     const serializedFiles = files.map((file) => {
-      return {
-        ...file,
-        metadata: JSON.stringify(file.metadata),
-      };
+      const serializedFile: any = {};
+      const defaultProperties = [
+        "_id",
+        "file_path",
+        "extension",
+        "url_path",
+        "filetype",
+      ];
+
+      for (const key in file) {
+        if (Object.prototype.hasOwnProperty.call(file, key)) {
+          const value = file[key];
+          // If the value is undefined, default it to null
+          serializedFile[key] = defaultProperties.includes(key)
+            ? value
+            : value !== undefined
+            ? JSON.stringify(value)
+            : null;
+        }
+      }
+
+      return serializedFile;
     });
 
     return db.batchInsert(Table.Files, serializedFiles);
+  }
+
+  get _id(): string {
+    return this.file._id;
+  }
+
+  get file_path(): string {
+    return this.file.file_path;
+  }
+
+  get extension(): string {
+    return this.file.extension;
+  }
+
+  get url_path(): string | null {
+    return this.file.url_path;
+  }
+
+  get filetype(): string | null {
+    return this.file.filetype;
+  }
+
+  get metadata(): MetaData | null {
+    return this.file.metadata;
   }
 }
 

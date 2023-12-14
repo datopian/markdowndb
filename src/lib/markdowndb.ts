@@ -10,9 +10,11 @@ import {
   isLinkToDefined,
   mapFileTagsToInsert,
   getUniqueValues,
+  getUniqueProperties,
 } from "./databaseUtils.js";
 import fs from "fs";
 import { CustomConfig } from "./CustomConfig.js";
+import { FileInfo } from "./process.js";
 
 const defaultFilePathToUrl = (filePath: string) => {
   let url = filePath
@@ -80,14 +82,36 @@ export class MarkdownDB {
     pathToUrlResolver?: (filePath: string) => string;
     customConfig?: CustomConfig;
   }) {
-    await resetDatabaseTables(this.db);
-
     const fileObjects = indexFolder(
       folderPath,
       pathToUrlResolver,
       customConfig,
       ignorePatterns
     );
+    await this.saveDataToDisk(fileObjects);
+  }
+
+  private async saveDataToDisk(fileObjects: FileInfo[]) {
+    await resetDatabaseTables(this.db);
+    const properties = getUniqueProperties(fileObjects);
+    MddbFile.deleteTable(this.db);
+    const defaultProperties = [
+      "_id",
+      "file_path",
+      "extension",
+      "url_path",
+      "filetype",
+      "metadata",
+      "tags",
+      "links",
+    ];
+    await MddbFile.createTable(
+      this.db,
+      properties.filter(
+        (property) => defaultProperties.indexOf(property) === -1
+      )
+    );
+
     const filesToInsert = fileObjects.map(mapFileToInsert);
     const uniqueTags = getUniqueValues(
       fileObjects.flatMap((file) => file.tags)
