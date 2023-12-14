@@ -95,22 +95,7 @@ export class MarkdownDB {
     await resetDatabaseTables(this.db);
     const properties = getUniqueProperties(fileObjects);
     MddbFile.deleteTable(this.db);
-    const defaultProperties = [
-      "_id",
-      "file_path",
-      "extension",
-      "url_path",
-      "filetype",
-      "metadata",
-      "tags",
-      "links",
-    ];
-    await MddbFile.createTable(
-      this.db,
-      properties.filter(
-        (property) => defaultProperties.indexOf(property) === -1
-      )
-    );
+    await MddbFile.createTable(this.db, properties);
 
     const filesToInsert = fileObjects.map(mapFileToInsert);
     const uniqueTags = getUniqueValues(

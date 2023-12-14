@@ -25,44 +25,40 @@ interface File {
   url_path: string | null;
   filetype: string | null;
   metadata: MetaData | null;
-  [key: string]: string | null | MetaData | undefined;
+  [key: string]: any;
 }
 
 class MddbFile {
   static table = Table.Files;
   static supportedExtensions = ["md", "mdx"];
+  static defaultProperties = [
+    "_id",
+    "file_path",
+    "extension",
+    "url_path",
+    "filetype",
+    "metadata",
+  ];
 
-  file: File = {
-    _id: "",
-    file_path: "",
-    extension: "",
-    url_path: null,
-    filetype: null,
-    metadata: null,
-  };
+  _id: string;
+  file_path: string;
+  extension: string;
+  url_path: string | null;
+  // TODO there should be a separate table for filetypes
+  // and another one for many-to-many relationship between files and filetypes
+  filetype: string | null;
+  metadata: MetaData | null;
+  [key: string]: any;
 
   // TODO type?
   constructor(file: any) {
-    this.file._id = file._id;
-    this.file.file_path = file.file_path;
-    this.file.extension = file.extension;
-    this.file.url_path = file.url_path;
-    this.file.filetype = file.filetype;
-    this.file.metadata = file.metadata ? JSON.parse(file.metadata) : null;
-
-    // Assign dynamic properties using index signature to this.file
-    for (const key in file) {
-      if (
-        key !== "_id" &&
-        key !== "file_path" &&
-        key !== "extension" &&
-        key !== "url_path" &&
-        key !== "filetype" &&
-        key !== "metadata"
-      ) {
-        this.file[key] = file[key];
+    Object.keys(file).forEach((key) => {
+      if (key === "metadata") {
+        this[key] = file[key] ? JSON.parse(file[key]) : null;
+      } else {
+        this[key] = file[key];
       }
-    }
+    });
   }
 
   toObject(): File {
@@ -77,9 +73,11 @@ class MddbFile {
       table.string("url_path");
       table.string("filetype");
       table.string("metadata");
-      for (let index = 0; index < properties.length; index++) {
-        table.string(properties[index]);
-      }
+      properties.forEach((property) => {
+        if (MddbFile.defaultProperties.indexOf(property) === -1) {
+          table.string(property);
+        }
+      });
     };
     const tableExists = await db.schema.hasTable(this.table);
 
@@ -102,54 +100,25 @@ class MddbFile {
 
     const serializedFiles = files.map((file) => {
       const serializedFile: any = {};
-      const defaultProperties = [
-        "_id",
-        "file_path",
-        "extension",
-        "url_path",
-        "filetype",
-      ];
 
-      for (const key in file) {
-        if (Object.prototype.hasOwnProperty.call(file, key)) {
-          const value = file[key];
-          // If the value is undefined, default it to null
-          serializedFile[key] = defaultProperties.includes(key)
+      Object.keys(file).forEach((key) => {
+        const value = file[key];
+        // If the value is undefined, default it to null
+        if (value !== undefined) {
+          const isDefaultProperty = MddbFile.defaultProperties.includes(key);
+          // Stringify all user-defined fields
+          serializedFile[key] = isDefaultProperty
             ? value
-            : value !== undefined
-            ? JSON.stringify(value)
-            : null;
+            : JSON.stringify(value);
+        } else {
+          serializedFile[key] = null;
         }
-      }
+      });
 
       return serializedFile;
     });
 
     return db.batchInsert(Table.Files, serializedFiles);
-  }
-
-  get _id(): string {
-    return this.file._id;
-  }
-
-  get file_path(): string {
-    return this.file.file_path;
-  }
-
-  get extension(): string {
-    return this.file.extension;
-  }
-
-  get url_path(): string | null {
-    return this.file.url_path;
-  }
-
-  get filetype(): string | null {
-    return this.file.filetype;
-  }
-
-  get metadata(): MetaData | null {
-    return this.file.metadata;
   }
 }
 
