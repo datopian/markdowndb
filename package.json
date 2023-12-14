@@ -52,7 +52,8 @@
     "remark-gfm": "^3.0.1",
     "remark-parse": "^10.0.1",
     "sqlite3": "^5.1.6",
-    "unist-util-select": "^4.0.3"
+    "unist-util-select": "^4.0.3",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
