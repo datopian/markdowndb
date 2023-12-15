@@ -25,11 +25,20 @@ interface File {
   url_path: string | null;
   filetype: string | null;
   metadata: MetaData | null;
+  [key: string]: any;
 }
 
 class MddbFile {
   static table = Table.Files;
   static supportedExtensions = ["md", "mdx"];
+  static defaultProperties = [
+    "_id",
+    "file_path",
+    "extension",
+    "url_path",
+    "filetype",
+    "metadata",
+  ];
 
   _id: string;
   file_path: string;
@@ -39,36 +48,42 @@ class MddbFile {
   // and another one for many-to-many relationship between files and filetypes
   filetype: string | null;
   metadata: MetaData | null;
+  [key: string]: any;
 
   // TODO type?
   constructor(file: any) {
-    this._id = file._id;
-    this.file_path = file.file_path;
-    this.extension = file.extension;
-    this.url_path = file.url_path;
-    this.filetype = file.filetype;
-    this.metadata = file.metadata ? JSON.parse(file.metadata) : null;
+    if (!file) {
+      return;
+    }
+    Object.keys(file).forEach((key) => {
+      if (key === "metadata") {
+        this[key] = file[key] ? JSON.parse(file[key]) : null;
+      } else {
+        this[key] = file[key];
+      }
+    });
   }
 
   toObject(): File {
-    return {
-      _id: this._id,
-      file_path: this.file_path,
-      extension: this.extension,
-      url_path: this.url_path,
-      filetype: this.filetype,
-      metadata: this.metadata,
-    };
+    return { ...this.file };
   }
 
-  static async createTable(db: Knex) {
+  static async createTable(db: Knex, properties: string[]) {
     const creator = (table: Knex.TableBuilder) => {
       table.string("_id").primary();
-      table.string("file_path").unique().notNullable(); // Path relative to process.cwd()
-      table.string("extension").notNullable(); // File extension
-      table.string("url_path"); // Sluggfied path relative to content folder
-      table.string("filetype"); // Type field in frontmatter if it exists
-      table.string("metadata"); // All frontmatter data
+      table.string("file_path").unique().notNullable();
+      table.string("extension").notNullable();
+      table.string("url_path");
+      table.string("filetype");
+      table.string("metadata");
+      properties.forEach((property) => {
+        if (
+          MddbFile.defaultProperties.indexOf(property) === -1 &&
+          ["tags", "links"].indexOf(property) === -1
+        ) {
+          table.string(property);
+        }
+      });
     };
     const tableExists = await db.schema.hasTable(this.table);
 
@@ -88,11 +103,24 @@ class MddbFile {
     if (!areUniqueObjectsByKey(files, "file_path")) {
       throw new Error("Files must have unique file_path");
     }
+
     const serializedFiles = files.map((file) => {
-      return {
-        ...file,
-        metadata: JSON.stringify(file.metadata),
-      };
+      const serializedFile: any = {};
+
+      Object.keys(file).forEach((key) => {
+        const value = file[key];
+        // If the value is undefined, default it to null
+        if (value !== undefined) {
+          const shouldStringify =
+            key === "metadata" || !MddbFile.defaultProperties.includes(key);
+          // Stringify all user-defined fields and metadata
+          serializedFile[key] = shouldStringify ? JSON.stringify(value) : value;
+        } else {
+          serializedFile[key] = null;
+        }
+      });
+
+      return serializedFile;
     });
 
     return db.batchInsert(Table.Files, serializedFiles);

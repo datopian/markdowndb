@@ -4,7 +4,7 @@ import path from "path";
 import { WikiLink } from "./parseFile.js";
 
 export async function resetDatabaseTables(db: Knex) {
-  const tableNames = [MddbFile, MddbTag, MddbFileTag, MddbLink];
+  const tableNames = [MddbTag, MddbFileTag, MddbLink];
   // Drop and Create tables
   for (const table of tableNames) {
     await table.deleteTable(db);
@@ -13,8 +13,8 @@ export async function resetDatabaseTables(db: Knex) {
 }
 
 export function mapFileToInsert(file: any) {
-  const { _id, file_path, extension, url_path, filetype, metadata } = file;
-  return { _id, file_path, extension, url_path, filetype, metadata };
+  const { tags, links, ...rest } = file;
+  return { ...rest };
 }
 
 export function mapLinksToInsert(filesToInsert: File[], file: any) {
@@ -66,4 +66,18 @@ export function getUniqueValues<T>(inputArray: T[]): T[] {
   }
 
   return uniqueArray;
+}
+
+export function getUniqueProperties(objects: any[]): string[] {
+  const uniqueProperties: string[] = [];
+
+  for (const object of objects) {
+    for (const key of Object.keys(object)) {
+      if (!uniqueProperties.includes(key)) {
+        uniqueProperties.push(key);
+      }
+    }
+  }
+
+  return uniqueProperties;
 }

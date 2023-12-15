@@ -40,7 +40,7 @@ export function indexFolder(
       if (!result.success) {
         const error: ZodError = (result as any).error;
 
-        error.errors.forEach((err) => {
+        error.errors.forEach((err: any) => {
           const errorMessage = `Error: In ${
             fileObject.file_path
           } for the ${documentType} schema. \n    In "${err.path.join(
