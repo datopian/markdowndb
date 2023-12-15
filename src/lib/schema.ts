@@ -52,6 +52,9 @@ class MddbFile {
 
   // TODO type?
   constructor(file: any) {
+    if (!file) {
+      return;
+    }
     Object.keys(file).forEach((key) => {
       if (key === "metadata") {
         this[key] = file[key] ? JSON.parse(file[key]) : null;
@@ -74,7 +77,10 @@ class MddbFile {
       table.string("filetype");
       table.string("metadata");
       properties.forEach((property) => {
-        if (MddbFile.defaultProperties.indexOf(property) === -1) {
+        if (
+          MddbFile.defaultProperties.indexOf(property) === -1 &&
+          ["tags", "links"].indexOf(property) === -1
+        ) {
           table.string(property);
         }
       });
@@ -105,11 +111,10 @@ class MddbFile {
         const value = file[key];
         // If the value is undefined, default it to null
         if (value !== undefined) {
-          const isDefaultProperty = MddbFile.defaultProperties.includes(key);
-          // Stringify all user-defined fields
-          serializedFile[key] = isDefaultProperty
-            ? value
-            : JSON.stringify(value);
+          const shouldStringify =
+            key === "metadata" || !MddbFile.defaultProperties.includes(key);
+          // Stringify all user-defined fields and metadata
+          serializedFile[key] = shouldStringify ? JSON.stringify(value) : value;
         } else {
           serializedFile[key] = null;
         }
