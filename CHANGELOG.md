@@ -1,5 +1,13 @@
 # mddb
 
+## 0.8.0
+
+### Minor Changes
+
+- [`ea5d036`](https://github.com/datopian/markdowndb/commit/ea5d0366a8b82163fa4a1e85a5e62443a09475f3) Thanks [@mohamedsalem401](https://github.com/mohamedsalem401)! - - Add computed fields
+  - Add document types
+  - Implement hot-reloading
+
 ## 0.7.0
 
 ### Minor Changes
