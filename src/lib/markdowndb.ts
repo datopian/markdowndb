@@ -151,6 +151,9 @@ export class MarkdownDB {
 
   private async saveDataToDisk(fileObjects: FileInfo[]) {
     await resetDatabaseTables(this.db);
+    const properties = getUniqueProperties(fileObjects);
+    MddbFile.deleteTable(this.db);
+    await MddbFile.createTable(this.db, properties);
 
     const filesToInsert = fileObjects.map(mapFileToInsert);
     const uniqueTags = getUniqueValues(
