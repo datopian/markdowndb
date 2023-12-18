@@ -123,7 +123,17 @@ class MddbFile {
       return serializedFile;
     });
 
-    return db.batchInsert(Table.Files, serializedFiles);
+    if (serializedFiles.length >= 500) {
+      const promises = [];
+      for (let i = 0; i < serializedFiles.length; i += 500) {
+        promises.push(
+          db.batchInsert(Table.Files, serializedFiles.slice(i, i + 500))
+        );
+      }
+      return Promise.all(promises);
+    } else {
+      return db.batchInsert(Table.Files, serializedFiles);
+    }
   }
 }
 
@@ -178,7 +188,15 @@ class MddbLink {
   }
 
   static batchInsert(db: Knex, links: Link[]) {
-    return db.batchInsert(Table.Links, links);
+    if (links.length >= 500) {
+      const promises = [];
+      for (let i = 0; i < links.length; i += 500) {
+        promises.push(db.batchInsert(Table.Links, links.slice(i, i + 500)));
+      }
+      return Promise.all(promises);
+    } else {
+      return db.batchInsert(Table.Links, links);
+    }
   }
 }
 
@@ -225,7 +243,16 @@ class MddbTag {
     if (!areUniqueObjectsByKey(tags, "name")) {
       throw new Error("Tags must have unique name");
     }
-    return db.batchInsert(Table.Tags, tags);
+
+    if (tags.length >= 500) {
+      const promises = [];
+      for (let i = 0; i < tags.length; i += 500) {
+        promises.push(db.batchInsert(Table.Tags, tags.slice(i, i + 500)));
+      }
+      return Promise.all(promises);
+    } else {
+      return db.batchInsert(Table.Tags, tags);
+    }
   }
 }
 
@@ -266,7 +293,17 @@ class MddbFileTag {
   }
 
   static batchInsert(db: Knex, fileTags: FileTag[]) {
-    return db.batchInsert(Table.FileTags, fileTags);
+    if (fileTags.length >= 500) {
+      const promises = [];
+      for (let i = 0; i < fileTags.length; i += 500) {
+        promises.push(
+          db.batchInsert(Table.FileTags, fileTags.slice(i, i + 500))
+        );
+      }
+      return Promise.all(promises);
+    } else {
+      return db.batchInsert(Table.FileTags, fileTags);
+    }
   }
 }
 
