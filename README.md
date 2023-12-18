@@ -3,7 +3,7 @@
 [![](https://badgen.net/npm/v/mddb)](https://www.npmjs.com/package/mddb)
 [![](https://dcbadge.vercel.app/api/server/EeyfGrGu4U)](https://discord.gg/EeyfGrGu4U)
 
-MarkdownDB is a javascript library that turns markdown files into structured queryable data. Build rich markdown-powered sites easily and reliably. Specifically it:
+MarkdownDB is a javascript library that turns markdown files into structured queryable databaase (SQL-based and simple JSON). It helps you build rich markdown-powered sites easily and reliably. Specifically it:
 
 - Parses your markdown files to extract structured data (frontmatter, tags etc) and builds a queryable index either in JSON files or a local SQLite database
 - Provides a lightweight javascript API for querying the index and using the data files into your application
