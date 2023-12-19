@@ -17,6 +17,7 @@ import { CustomConfig } from "./CustomConfig.js";
 import { FileInfo, processFile } from "./process.js";
 import chokidar from "chokidar";
 import { recursiveWalkDir } from "./recursiveWalkDir.js";
+import { loadConfig } from "./loadConfig.js";
 
 const defaultFilePathToUrl = (filePath: string) => {
   let url = filePath
@@ -77,19 +78,22 @@ export class MarkdownDB {
     // TODO support glob patterns
     ignorePatterns = [],
     pathToUrlResolver = defaultFilePathToUrl,
-    customConfig = {},
+    customConfig,
     watch = false,
+    configFilePath,
   }: {
     folderPath: string;
     ignorePatterns?: RegExp[];
     pathToUrlResolver?: (filePath: string) => string;
     customConfig?: CustomConfig;
     watch?: boolean;
+    configFilePath?: string;
   }) {
+    const config = customConfig || (await loadConfig(configFilePath)) || {};
     const fileObjects = indexFolder(
       folderPath,
       pathToUrlResolver,
-      customConfig,
+      config,
       ignorePatterns
     );
     await this.saveDataToDisk(fileObjects);
@@ -100,10 +104,17 @@ export class MarkdownDB {
       });
 
       const filePathsToIndex = recursiveWalkDir(folderPath);
-      const computedFields = customConfig.computedFields || [];
+      const computedFields = config.computedFields || [];
 
       const handleFileEvent = (event: string, filePath: string) => {
-        if (!shouldIncludeFile(filePath, ignorePatterns)) {
+        if (
+          !shouldIncludeFile({
+            filePath,
+            ignorePatterns,
+            includeGlob: config.include,
+            excludeGlob: config.exclude,
+          })
+        ) {
           return;
         }
 
