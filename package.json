@@ -45,9 +45,11 @@
   "types": "./dist/src/index.d.ts",
   "dependencies": {
     "@portaljs/remark-wiki-link": "^1.0.4",
+    "@types/micromatch": "^4.0.6",
     "chokidar": "^3.5.3",
     "gray-matter": "^4.0.3",
     "knex": "^2.4.2",
+    "micromatch": "^4.0.5",
     "react-markdown": "^9.0.1",
     "remark-gfm": "^3.0.1",
     "remark-parse": "^10.0.1",

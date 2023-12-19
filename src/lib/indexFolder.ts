@@ -2,6 +2,7 @@ import { ZodError } from "zod";
 import { CustomConfig } from "./CustomConfig.js";
 import { FileInfo, processFile } from "./process.js";
 import { recursiveWalkDir } from "./recursiveWalkDir.js";
+import micromatch from "micromatch";
 
 export function indexFolder(
   folderPath: string,
@@ -11,7 +12,12 @@ export function indexFolder(
 ) {
   const filePathsToIndex = recursiveWalkDir(folderPath);
   const filteredFilePathsToIndex = filePathsToIndex.filter((filePath) =>
-    shouldIncludeFile(filePath, ignorePatterns)
+    shouldIncludeFile({
+      filePath,
+      ignorePatterns,
+      includeGlob: config.include,
+      excludeGlob: config.exclude,
+    })
   );
   const files: FileInfo[] = [];
   const computedFields = config.computedFields || [];
@@ -56,11 +62,45 @@ export function indexFolder(
   return files;
 }
 
-export function shouldIncludeFile(
-  filePath: string,
-  ignorePatterns?: RegExp[]
-): boolean {
-  return !(
-    ignorePatterns && ignorePatterns.some((pattern) => pattern.test(filePath))
-  );
+export function shouldIncludeFile({
+  filePath,
+  ignorePatterns,
+  includeGlob,
+  excludeGlob,
+}: {
+  filePath: string;
+  ignorePatterns?: RegExp[];
+  includeGlob?: string[];
+  excludeGlob?: string[];
+}): boolean {
+  const normalizedFilePath = filePath.replace(/\\/g, "/");
+
+  if (
+    ignorePatterns &&
+    ignorePatterns.some((pattern) => pattern.test(normalizedFilePath))
+  ) {
+    return false;
+  }
+
+  // Check if the file should be included based on includeGlob
+  if (
+    includeGlob &&
+    !includeGlob.some((pattern) =>
+      micromatch.isMatch(normalizedFilePath, pattern)
+    )
+  ) {
+    return false;
+  }
+
+  // Check if the file should be excluded based on excludeGlob
+  if (
+    excludeGlob &&
+    excludeGlob.some((pattern) =>
+      micromatch.isMatch(normalizedFilePath, pattern)
+    )
+  ) {
+    return false;
+  }
+
+  return true;
 }

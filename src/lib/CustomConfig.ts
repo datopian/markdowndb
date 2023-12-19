@@ -8,4 +8,6 @@ type Schemas = { [index: string]: ZodObject<any> };
 export interface CustomConfig {
   computedFields?: ComputedFields;
   schemas?: Schemas;
+  include?: string[];
+  exclude?: string[];
 }
