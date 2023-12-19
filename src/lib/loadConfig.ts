@@ -1,6 +1,6 @@
 import * as path from "path";
 
-export async function loadConfig(configFilePath: string) {
+export async function loadConfig(configFilePath?: string) {
   const normalizedPath = path.resolve(configFilePath || "markdowndb.config.js");
   const fileUrl = new URL(`file://${normalizedPath}`);
 

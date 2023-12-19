@@ -85,6 +85,7 @@ export function shouldIncludeFile({
   // Check if the file should be included based on includeGlob
   if (
     includeGlob &&
+    includeGlob.length > 0 &&
     !includeGlob.some((pattern) =>
       micromatch.isMatch(normalizedFilePath, pattern)
     )

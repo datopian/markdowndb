@@ -87,9 +87,9 @@ export class MarkdownDB {
     pathToUrlResolver?: (filePath: string) => string;
     customConfig?: CustomConfig;
     watch?: boolean;
-    configFilePath: string;
+    configFilePath?: string;
   }) {
-    const config = customConfig || (await loadConfig(configFilePath));
+    const config = customConfig || (await loadConfig(configFilePath)) || {};
     const fileObjects = indexFolder(
       folderPath,
       pathToUrlResolver,
