@@ -1,5 +1,11 @@
 # mddb
 
+## 0.9.0
+
+### Minor Changes
+
+- [#97](https://github.com/datopian/markdowndb/pull/97) [`c496199`](https://github.com/datopian/markdowndb/commit/c496199373745c066d82875700fcedd1e476ac3e) Thanks [@mohamedsalem401](https://github.com/mohamedsalem401)! - - Add configuration with include/exclude options
+
 ## 0.8.0
 
 ### Minor Changes

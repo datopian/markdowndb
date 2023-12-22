@@ -1,6 +1,6 @@
 {
   "name": "mddb",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Parse markdown files and store them in an SQL database.",
   "bin": {
     "mddb": "./dist/src/bin/index.js"
