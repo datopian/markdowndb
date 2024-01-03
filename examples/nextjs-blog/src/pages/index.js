@@ -1,4 +1,4 @@
-import fs from "fs"
+import fs from "fs";
 
 export default function Home({ posts }) {
   return (
@@ -16,12 +16,12 @@ export default function Home({ posts }) {
         </div>
       </main>
     </>
-  )
+  );
 }
 
 export async function getStaticProps() {
-  const filePath = 'src/.markdowndb/files.json';
-  const fileContent = fs.readFileSync(filePath, 'utf-8');
+  const filePath = "src/.markdowndb/files.json";
+  const fileContent = fs.readFileSync(filePath, "utf-8");
   const posts = JSON.parse(fileContent);
 
   return {

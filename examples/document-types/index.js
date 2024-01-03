@@ -24,7 +24,7 @@ const schemas = {
 await client.indexFolder({
   folderPath: contentPath,
   ignorePatterns: ignorePatterns,
-  schemas: schemas
+  schemas: schemas,
 });
 
 process.exit(0);

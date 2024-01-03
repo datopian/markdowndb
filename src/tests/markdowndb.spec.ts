@@ -134,7 +134,9 @@ describe("MarkdownDB - default config", () => {
       });
       const dbFilesPaths = dbFiles.map((f) => f.file_path);
 
-      const expectedPaths = [`${pathToContentFixture}/blog/blog1.mdx`].map(normalizePathSeparator);
+      const expectedPaths = [`${pathToContentFixture}/blog/blog1.mdx`].map(
+        normalizePathSeparator
+      );
 
       expect(dbFilesPaths).toHaveLength(expectedPaths.length);
       dbFilesPaths.forEach((p) => {
@@ -148,7 +150,9 @@ describe("MarkdownDB - default config", () => {
       });
       const dbFilesPaths = dbFiles.map((f) => f.file_path);
 
-      const expectedPaths = [`${pathToContentFixture}/blog/blog2.mdx`].map(normalizePathSeparator);
+      const expectedPaths = [`${pathToContentFixture}/blog/blog2.mdx`].map(
+        normalizePathSeparator
+      );
 
       expect(dbFilesPaths).toHaveLength(expectedPaths.length);
       dbFilesPaths.forEach((p) => {
@@ -163,7 +167,9 @@ describe("MarkdownDB - default config", () => {
         extensions: ["md", "mdx"],
       });
       const dbFilesPaths = dbFiles.map((f) => f.file_path);
-      const expectedPaths = [`${pathToContentFixture}/news/news1.mdx`].map(normalizePathSeparator);
+      const expectedPaths = [`${pathToContentFixture}/news/news1.mdx`].map(
+        normalizePathSeparator
+      );
 
       expect(dbFilesPaths).toHaveLength(expectedPaths.length);
       dbFilesPaths.forEach((p) => {
