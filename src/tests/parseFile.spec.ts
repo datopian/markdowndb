@@ -12,6 +12,26 @@ tags: a, b, c
 ![[Some Image.png]]
 - [ ] uncompleted task
 - [x] completed task
+
+## Test tags
+
+### Should be extracted 
+#日本語タグ
+Another tag: #标签名
+#метка
+Another tag: #태그이름
+#tag_فارسی
+#Tag_avec_éèç-_öäüßñ
+
+### Shouldn't be extracted 
+\`\`\`bash
+#---------------------------------------------------------------------------------------
+# This's a title
+#---------------------------------------------------------------------------------------
+...
+\`\`\`
+
+#4874
 `;
 
 describe("parseFile", () => {
@@ -19,7 +39,7 @@ describe("parseFile", () => {
     const expectedMetadata = {
       title: "Hello World",
       authors: ["John Doe", "Jane Doe"],
-      tags: ["a", "b", "c"],
+      tags: ["a", "b", "c", "日本語タグ", "标签名", "метка", "태그이름", "tag_فارسی", "Tag_avec_éèç-_öäüßñ"],
       tasks: [
         { description: "uncompleted task", checked: false },
         { description: "completed task", checked: true },
@@ -68,7 +88,7 @@ describe("parseFile", () => {
     const expectedMetadata = {
       title: "Hello World",
       authors: ["John Doe", "Jane Doe"],
-      tags: ["a", "b", "c"],
+      tags: ["a", "b", "c", "日本語タグ", "标签名", "метка", "태그이름", "tag_فارسی", "Tag_avec_éèç-_öäüßñ"],
       tasks: [
         { description: "uncompleted task", checked: false },
         { description: "completed task", checked: true },

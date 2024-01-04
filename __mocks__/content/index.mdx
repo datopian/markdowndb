@@ -5,10 +5,33 @@ tags: tag1, tag2, tag3
 
 # Welcome
 
+## Test links
 [link](blog0.mdx)
 
+## Test tasks
 - [] uncompleted task 1
 - [ ] uncompleted task 2
 
 - [x] completed task 1
 - [X] completed task 2
+
+## Test tags
+
+### Should be extracted 
+#日本語タグ
+Another tag: #标签名
+#метка
+Another tag: #태그이름
+#tag_فارسی
+#Tag_avec_éèç-_öäüßñ
+
+### Shouldn't be extracted 
+```bash
+#-------f--------------------------------------------------------------------------------
+#
+#---------------------------------------------------------------------------------------
+...
+```
+#4874
+# head #tag 
+    in heading and also in the #tag-body body text.
