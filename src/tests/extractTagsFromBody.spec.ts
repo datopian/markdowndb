@@ -39,7 +39,7 @@ describe("extractTagsFromBody", () => {
 
   test("should extract tags from both heading and body text", () => {
     const tags = getTagsFromSource(`# head #tag 
-    in heading and also in the #tag-body body text.`);
+in heading and also in the #tag-body body text.`);
     const expectedTags = ["tag", "tag-body"];
     expect(tags).toEqual(expectedTags);
   });
@@ -73,8 +73,8 @@ describe("extractTagsFromBody", () => {
   // for now we will pass the body content only not the whole source
   test("shouldn't extract frontmatter tags", () => {
     const tags = getTagsFromSource(`
-    No tags in this content.
-    #gr3
+No tags in this content.
+#gr3
     `);
     const expectedTags: string[] = ["gr3"];
     expect(tags).toEqual(expectedTags);

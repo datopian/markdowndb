@@ -203,6 +203,12 @@ describe("MarkdownDB - default config", () => {
         { name: "politics" },
         { name: "sports" },
         { name: "culture" },
+        { name: "日本語タグ" },
+        { name: "标签名" },
+        { name: "метка" },
+        { name: "태그이름" },
+        { name: "tag_فارسی" },
+        { name: "Tag_avec_éèç-_öäüßñ" },
       ];
 
       expect(dbTags).toHaveLength(extectedTags.length);

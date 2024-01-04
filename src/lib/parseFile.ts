@@ -66,16 +66,39 @@ export const extractTagsFromBody = (ast: Root) => {
   const nodes = selectAll("*", ast);
   for (let index = 0; index < nodes.length; index++) {
     const node: any = nodes[index];
-    if (node.value) {
-      const textTags = node.value.match(/(?:^|\s)(#(\w+|\/|-|_)+)/g);
-      if (textTags) {
-        tags = tags.concat(textTags.map((tag: string) => tag.trim().slice(1))); // Extract tags and remove the '#'
-      }
+    const textContent = node.value; // extractTextWithoutCodeBlocks(node);
+    if (textContent && node.type !== "code") {
+      const textTags = extractTags(textContent);
+      tags = tags.concat(textTags);
     }
   }
 
   return tags;
 };
+
+function extractTags(text: string) {
+  let tags: any = [];
+  const textTags = text.match(/(?:^|\s+|\n+|\r+)#([a-zA-Z0-9_\-\/\p{L}]+)/gu);
+  if (textTags) {
+    tags = tags.concat(
+      textTags
+        .filter((tag) => isValidTag(tag.trim().slice(1)))
+        .map((tag) => tag.trim().slice(1))
+    ); // Extract tags and remove the '#'
+  }
+
+  return tags;
+};
+
+function isValidTag(tag: string) {
+  // Check if the tag follows the specified rules
+  return (
+    tag.length > 1 &&
+    /[a-zA-Z_\-\/\p{L}]+/gu.test(tag) && // At least one non-numerical character
+    !/\s/.test(tag) && // No blank spaces
+    /[a-zA-Z0-9_\-\/\p{L}]+/gu.test(tag) // Valid characters: alphabetical letters, numbers, underscore, hyphen, forward slash, and any letter in any language
+  );
+}
 
 export interface LinkExtractors {
   [test: string]: (node: any) => WikiLink;
