@@ -1,5 +1,11 @@
 # mddb
 
+## 0.9.1
+
+### Patch Changes
+
+- [#103](https://github.com/datopian/markdowndb/pull/103) [`ae6575e`](https://github.com/datopian/markdowndb/commit/ae6575ee40a1633a235bca0513f1071552b39395) Thanks [@mohamedsalem401](https://github.com/mohamedsalem401)! - Fix tags from body extraction
+
 ## 0.9.0
 
 ### Minor Changes
