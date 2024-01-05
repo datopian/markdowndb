@@ -66,8 +66,8 @@ export const extractTagsFromBody = (ast: Root) => {
   const nodes = selectAll("*", ast);
   for (let index = 0; index < nodes.length; index++) {
     const node: any = nodes[index];
-    const textContent = node.value; // extractTextWithoutCodeBlocks(node);
-    if (textContent && node.type !== "code") {
+    const textContent = node.value;
+    if (textContent && node.type !== "code" && node.type !== "inlineCode") {
       const textTags = extractTags(textContent);
       tags = tags.concat(textTags);
     }
