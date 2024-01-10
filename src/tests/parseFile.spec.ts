@@ -109,12 +109,6 @@ describe("parseFile", () => {
         "태그이름",
         "tag_فارسی",
         "Tag_avec_éèç-_öäüßñ",
-        "日本語タグ",
-        "标签名",
-        "метка",
-        "태그이름",
-        "tag_فارسی",
-        "Tag_avec_éèç-_öäüßñ",
       ],
       tasks: [
         { description: "uncompleted task", checked: false },
