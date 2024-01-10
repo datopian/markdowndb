@@ -112,7 +112,8 @@ class MddbFile {
         // If the value is undefined, default it to null
         if (value !== undefined) {
           const shouldStringify =
-            key === "metadata" || !MddbFile.defaultProperties.includes(key);
+            (key === "metadata" || !MddbFile.defaultProperties.includes(key)) &&
+            typeof value === "object";
           // Stringify all user-defined fields and metadata
           serializedFile[key] = shouldStringify ? JSON.stringify(value) : value;
         } else {

@@ -23,6 +23,7 @@ export function parseFile(source: string, options?: ParsingOptions) {
 
   // Links
   const links = extractWikiLinks(ast, options);
+  metadata.tags = Array.from(new Set(metadata.tags));
 
   const tasks = extractTasks(ast);
   metadata.tasks = tasks;
@@ -78,7 +79,7 @@ export const extractTagsFromBody = (ast: Root) => {
 
 function extractTags(text: string) {
   let tags: any = [];
-  const textTags = text.match(/(?:^|\s+|\n+|\r+)#([a-zA-Z0-9_\-\/\p{L}]+)/gu);
+  const textTags = text.match(/(?:^|\s+|\n+|\r+)#([a-zA-Z0-9_\-/\p{L}]+)/gu);
   if (textTags) {
     tags = tags.concat(
       textTags
@@ -94,9 +95,9 @@ function isValidTag(tag: string) {
   // Check if the tag follows the specified rules
   return (
     tag.length > 1 &&
-    /[a-zA-Z_\-\/\p{L}]+/gu.test(tag) && // At least one non-numerical character
+    /[a-zA-Z_\-/\p{L}]+/gu.test(tag) && // At least one non-numerical character
     !/\s/.test(tag) && // No blank spaces
-    /[a-zA-Z0-9_\-\/\p{L}]+/gu.test(tag) // Valid characters: alphabetical letters, numbers, underscore, hyphen, forward slash, and any letter in any language
+    /[a-zA-Z0-9_\-/\p{L}]+/gu.test(tag) // Valid characters: alphabetical letters, numbers, underscore, hyphen, forward slash, and any letter in any language
   );
 }
 
