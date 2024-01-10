@@ -27,9 +27,7 @@ describe("MarkdownDB - default config", () => {
   });
 
   afterAll(async () => {
-    // TODO why we have to call this twice?
-    mddb.db.destroy();
-    mddb._destroyDb();
+    await mddb.db.destroy();
   });
 
   describe("correct startup and indexing", () => {
