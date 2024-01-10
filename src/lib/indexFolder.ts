@@ -53,10 +53,11 @@ export function indexFolder(
             )}" field: ${err.message}`;
           console.error(errorMessage);
         });
+        
+        throw new Error(
+          "Validation Failed: Unable to validate files against the specified scheme. Ensure that the file formats and content adhere to the specified scheme."
+        );
       }
-      throw new Error(
-        "Validation Failed: Unable to validate files against the specified scheme. Ensure that the file formats and content adhere to the specified scheme."
-      );
     }
 
     files.push(fileObject);
