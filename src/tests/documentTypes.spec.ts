@@ -59,7 +59,6 @@ describe("Document Types Schema Validate Testing", () => {
             },
         });
         const dbFiles = await mddb.getFiles({ filetypes: ["blog"] });
-        // console.log(JSON.stringify(dbFiles));
         for (const file of dbFiles) {
             expect(file.title).toBe("Hello");
         }
