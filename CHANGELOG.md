@@ -1,5 +1,16 @@
 # mddb
 
+## 0.9.2
+
+### Patch Changes
+
+- [#108](https://github.com/datopian/markdowndb/pull/108) [`ea9cc83`](https://github.com/datopian/markdowndb/commit/ea9cc83e5315d256c80cf107ccd18caacaa6bc1a) Thanks [@mohamedsalem401](https://github.com/mohamedsalem401)! - - Add tests for document types
+  - Fix throwing an error when the document type is incorrect
+  - Fix linting error
+  - Fix a strange duplicated body tags issue
+  - Fix the library incorrectly stringifying strings
+  - Add tests for computed fields
+
 ## 0.9.1
 
 ### Patch Changes
