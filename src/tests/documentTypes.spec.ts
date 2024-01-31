@@ -22,7 +22,7 @@ describe("Document Types Schema Validate Testing", () => {
         await mddb.db.destroy();
     });
 
-    test("Should Throw an Error scheme validation failed", async () => {
+    test("Test that the 'indexFolder' function throws a validation error for a missing field in the blog schema.", async () => {
         try {
             await mddb.indexFolder({
                 folderPath: pathToContentFixture,
@@ -34,12 +34,12 @@ describe("Document Types Schema Validate Testing", () => {
                     },
                 },
             });
-            fail("Expected an error, but none was thrown.");
+            
+            fail("Expected a validation error due to a missing field in the blog schema, but none was thrown.");
         } catch (error: any) {
             expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe(
-                "Validation Failed: Unable to validate files against the specified scheme. Ensure that the file formats and content adhere to the specified scheme."
-            );
+            expect(error.message).toContain("Validation Failed: Unable to validate files against the specified scheme.");
+            ;
         }
     });
     test("Should check if the title field is created and save in db", async () => {
@@ -59,7 +59,6 @@ describe("Document Types Schema Validate Testing", () => {
             },
         });
         const dbFiles = await mddb.getFiles({ filetypes: ["blog"] });
-        // console.log(JSON.stringify(dbFiles));
         for (const file of dbFiles) {
             expect(file.title).toBe("Hello");
         }

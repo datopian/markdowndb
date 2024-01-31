@@ -1,7 +1,7 @@
 # MarkdownDB
 
 [![](https://badgen.net/npm/v/mddb)](https://www.npmjs.com/package/mddb)
-[![](https://dcbadge.vercel.app/api/server/EeyfGrGu4U)](https://discord.gg/EeyfGrGu4U)
+[![](https://dcbadge.vercel.app/api/server/xfFDMPU9dC)](https://discord.gg/xfFDMPU9dC)
 
 MarkdownDB is a javascript library that turns markdown files into structured queryable databaase (SQL-based and simple JSON). It helps you build rich markdown-powered sites easily and reliably. Specifically it:
 
