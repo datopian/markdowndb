@@ -34,7 +34,7 @@ export function processFile(
     _id: id,
     file_path: filePath,
     extension,
-    url_path: null,
+    url_path: pathToUrlResolver(relativePath),
     filetype: null,
     metadata: {},
     tags: [],
@@ -59,7 +59,6 @@ export function processFile(
     permalinks: filePathsToIndex,
   });
 
-  fileInfo.url_path = pathToUrlResolver(relativePath);
   fileInfo.metadata = metadata;
   fileInfo.links = links;
 

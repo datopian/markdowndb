@@ -51,6 +51,13 @@ describe("MarkdownDB - default config", () => {
       const dbFile2 = await mddb.getFileByUrl("blog/blog2");
       expect(dbFile2).not.toBeNull();
     });
+
+    test('test can get file canvas by url', async () => {
+      const dbFile1 = await mddb.getFileByUrl('hi.canvas');
+      expect(dbFile1).not.toBeNull();
+      expect(dbFile1.url_path).toBe('hi.canvas');
+      expect(dbFile1.extension).toBe('canvas');
+    });
   });
 
   describe("querying files", () => {
