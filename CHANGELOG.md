@@ -1,5 +1,11 @@
 # mddb
 
+## 0.9.3
+
+### Patch Changes
+
+- [`abdc2c6`](https://github.com/datopian/markdowndb/commit/abdc2c690c413f8724effaa11b8d55b4b55cba39) Thanks [@mohamedsalem401](https://github.com/mohamedsalem401)! - Add url_path to all files
+
 ## 0.9.2
 
 ### Patch Changes
