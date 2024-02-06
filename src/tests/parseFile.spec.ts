@@ -51,8 +51,8 @@ describe("parseFile", () => {
         "Tag_avec_éèç-_öäüßñ",
       ],
       tasks: [
-        { description: "uncompleted task", checked: false },
-        { description: "completed task", checked: true },
+        { description: "uncompleted task", checked: false, metadata: {}},
+        { description: "completed task", checked: true, metadata: {}},
       ],
     };
     const expectedLinks = [
@@ -111,8 +111,8 @@ describe("parseFile", () => {
         "Tag_avec_éèç-_öäüßñ",
       ],
       tasks: [
-        { description: "uncompleted task", checked: false },
-        { description: "completed task", checked: true },
+        { description: "uncompleted task", checked: false, metadata: {}},
+        { description: "completed task", checked: true, metadata: {}},
       ],
     };
     const expectedLinks = [
@@ -158,5 +158,25 @@ describe("parseFile", () => {
     const { metadata, links } = parseFile(source, { permalinks });
     expect(metadata).toEqual(expectedMetadata);
     expect(links).toEqual(expectedLinks);
+  });
+});
+import { extractAllTaskMetadata } from "../lib/parseFile";
+
+describe("extractAllTaskMetadata", () => {
+  it("should extract metadata fields from the description", () => {
+    const description = "[[field1:: value1]] [[field2:: value2]] [[field3:: value3]]";
+    const expectedMetadata = [
+      { field1: "value1"},
+      { field2: "value2"},
+      { field3: "value3"},
+    ];
+    const metadata = extractAllTaskMetadata(description);
+    expect(metadata).toEqual(expectedMetadata);
+  });
+
+  it("should return an empty array if no metadata fields are found", () => {
+    const description = "This is a task description without any metadata";
+    const metadata = extractAllTaskMetadata(description);
+    expect(metadata).toEqual([]);
   });
 });

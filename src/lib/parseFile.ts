@@ -192,6 +192,11 @@ export const extractWikiLinks = (ast: Root, options?: ParsingOptions) => {
 export interface Task {
   description: string;
   checked: boolean;
+  metadata: TaskMetadata;
+}
+
+export interface TaskMetadata {
+  [key: string]: any;
 }
 
 export const extractTasks = (ast: Root) => {
@@ -205,6 +210,8 @@ export const extractTasks = (ast: Root) => {
         tasks.push({
           description,
           checked,
+          metadata: {
+          },
         });
       }
     }
@@ -221,6 +228,34 @@ function recursivelyExtractText(node: any) {
   } else {
     return "";
   }
+}
+
+export function extractAllTaskMetadata(description: string) : TaskMetadata[] {
+  // Extract metadata fields from the description with the form [[field:: value]]
+  // where field is the name of the metadata without spaces and value is the value of the metadata
+  // There can be multiple metadata fields in the description
+  const metadataRegex = /\[(.*?)::(.*?)\]/g;
+  const matches = description.match(metadataRegex);
+  if (matches) {
+    const metadata: TaskMetadata[] = [];
+    matches.forEach((match) => {
+      // extract field and value from groups in the match
+      for(const groups of match.matchAll(metadataRegex)) {
+      const field = groups[1].trim();
+      const value = groups[2].trim();
+      metadata.push({
+        [field]: value
+      });
+    });
+    return metadata;
+  } else {
+    return [];
+  } 
+
+
+
+
+  
 }
 
 // links = extractWikiLinks({
