@@ -228,7 +228,7 @@ function recursivelyExtractText(node: any) {
   } else {
     return "";
   }
-}
+};
 
 export function extractAllTaskMetadata(description: string) : TaskMetadata[] {
   // Extract metadata fields from the description with the form [[field:: value]]
@@ -240,13 +240,13 @@ export function extractAllTaskMetadata(description: string) : TaskMetadata[] {
     const metadata: TaskMetadata[] = [];
     matches.forEach((match) => {
       // extract field and value from groups in the match
-      for(const groups of match.matchAll(metadataRegex)) {
-      const field = groups[1].trim();
-      const value = groups[2].trim();
+      const allMatches = match.matchAll(metadataRegex).next().value;
+      const field = allMatches[1].trim();
+      const value = allMatches[2].trim();
       metadata.push({
-        [field]: value
+        [field]: value,
       });
-    });
+    }); // Add closing parenthesis here
     return metadata;
   } else {
     return [];

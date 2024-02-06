@@ -164,7 +164,7 @@ import { extractAllTaskMetadata } from "../lib/parseFile";
 
 describe("extractAllTaskMetadata", () => {
   it("should extract metadata fields from the description", () => {
-    const description = "[[field1:: value1]] [[field2:: value2]] [[field3:: value3]]";
+    const description = "[field1:: value1] [field2:: value2] [field3:: value3]";
     const expectedMetadata = [
       { field1: "value1"},
       { field2: "value2"},
