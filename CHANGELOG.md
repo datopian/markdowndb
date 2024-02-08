@@ -1,5 +1,11 @@
 # mddb
 
+## 0.9.4
+
+### Patch Changes
+
+- [`097e6d0`](https://github.com/datopian/markdowndb/commit/097e6d0b17321f696dc7e3e011d07c45eb9f5d65) Thanks [@mohamedsalem401](https://github.com/mohamedsalem401)! - Fix type validation
+
 ## 0.9.3
 
 ### Patch Changes
