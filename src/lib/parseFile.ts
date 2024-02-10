@@ -6,6 +6,7 @@ import * as path from "path";
 import gfm from "remark-gfm";
 import remarkWikiLink from "@portaljs/remark-wiki-link";
 import { Root } from "remark-parse/lib";
+import { MetaData, Task } from "./schema";
 
 export function parseFile(source: string, options?: ParsingOptions) {
   // Metadata
@@ -189,29 +190,30 @@ export const extractWikiLinks = (ast: Root, options?: ParsingOptions) => {
   return wikiLinks;
 };
 
-export interface Task {
-  description: string;
-  checked: boolean;
-  metadata: TaskMetadata;
-}
-
-export interface TaskMetadata {
-  [key: string]: any;
-}
-
 export const extractTasks = (ast: Root) => {
   const nodes = selectAll("*", ast);
   const tasks: Task[] = [];
   nodes.map((node: any) => {
     if (node.type === "listItem") {
       const description = recursivelyExtractText(node).trim();
-      const checked = node.checked;
-      if (checked !== null && checked !== undefined) {
+      const metadata = extractAllTaskMetadata(description);
+      const checked = node.checked !== null && node.checked !== undefined ? node.checked : null;
+      const created = metadata.created !== null && metadata.created !== undefined ? metadata.created : null;
+      const due = metadata.due !== null && metadata.due !== undefined ? metadata.due : null;
+      const completion = metadata.completion !== null && metadata.completion !== undefined ? metadata.completion : null;
+      const scheduled = metadata.scheduled !== null && metadata.scheduled !== undefined ? metadata.scheduled : null;
+      const start = metadata.start !== null && metadata.start !== undefined ? metadata.start : null;
+
+      if (checked !== null) {
         tasks.push({
           description,
           checked,
-          metadata: {
-          },
+          created,
+          due,
+          completion,
+          scheduled,
+          start,
+          metadata: metadata,
         });
       }
     }
@@ -230,26 +232,26 @@ function recursivelyExtractText(node: any) {
   }
 };
 
-export function extractAllTaskMetadata(description: string) : TaskMetadata[] {
-  // Extract metadata fields from the description with the form [[field:: value]]
+export function extractAllTaskMetadata(description: string) : MetaData  {
+  // Extract metadata fields from the description with the form [field:: value]
   // where field is the name of the metadata without spaces and value is the value of the metadata
   // There can be multiple metadata fields in the description
   const metadataRegex = /\[(.*?)::(.*?)\]/g;
   const matches = description.match(metadataRegex);
   if (matches) {
-    const metadata: TaskMetadata[] = [];
+    const metadata: MetaData = {};
     matches.forEach((match) => {
       // extract field and value from groups in the match
       const allMatches = match.matchAll(metadataRegex).next().value;
       const field = allMatches[1].trim();
       const value = allMatches[2].trim();
-      metadata.push({
-        [field]: value,
-      });
+      metadata[field] = value;
     }); // Add closing parenthesis here
+    const tags = extractTags(description);
+    metadata["tags"] = tags;
     return metadata;
   } else {
-    return [];
+    return {};
   } 
 
 

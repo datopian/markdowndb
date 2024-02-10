@@ -9,6 +9,7 @@ export enum Table {
   Tags = "tags",
   FileTags = "file_tags",
   Links = "links",
+  Tasks = "tasks",
 }
 
 type MetaData = {
@@ -308,4 +309,73 @@ class MddbFileTag {
   }
 }
 
-export { File, MddbFile, Link, MddbLink, Tag, MddbTag, FileTag, MddbFileTag };
+interface Task {
+  description: string;
+  checked: boolean;
+  due: string | null;
+  completion: string | null;
+  created: string;
+  start: string | null;
+  scheduled: string | null;
+  metadata: MetaData | null;
+
+}
+
+class MddbTask {
+  static table = Table.Tasks;
+  description: string;
+  checked: boolean;
+  due: string | null;
+  completion: string | null;
+  created: string;
+  start: string | null;
+  scheduled: string | null;
+  metadata: MetaData | null;
+
+  constructor(task: Task) {
+    this.description = task.description;
+    this.checked = task.checked;
+    this.due = task.due;
+    this.completion = task.completion;
+    this.created = task.created;
+    this.start = task.start;
+    this.scheduled = task.scheduled;
+    this.metadata = task.metadata;
+  }
+
+  static async createTable(db: Knex) {
+    const creator = (table: Knex.TableBuilder) => {
+      table.string("description").notNullable();
+      table.boolean("checked").notNullable();
+      table.string("due");
+      table.string("completion");
+      table.string("created");
+      table.string("start");
+      table.string("scheduled");
+      table.string("metadata");
+    };
+    const tableExists = await db.schema.hasTable(this.table);
+
+    if (!tableExists) {
+      await db.schema.createTable(this.table, creator);
+    }
+  }
+
+  static async deleteTable(db: Knex) {
+    await db.schema.dropTableIfExists(this.table);
+  }
+
+  static batchInsert(db: Knex, tasks: Task[]) {
+    if (tasks.length >= 500) {
+      const promises = [];
+      for (let i = 0; i < tasks.length; i += 500) {
+        promises.push(db.batchInsert(Table.Tasks, tasks.slice(i, i + 500)));
+      }
+      return Promise.all(promises);
+    } else {
+      return db.batchInsert(Table.Tasks, tasks);
+    }
+  }
+}
+
+export { MetaData, File, MddbFile, Link, MddbLink, Tag, MddbTag, FileTag, MddbFileTag, Task, MddbTask };
