@@ -347,6 +347,7 @@ class MddbTask {
     const creator = (table: Knex.TableBuilder) => {
       table.string("description").notNullable();
       table.boolean("checked").notNullable();
+      table.string("file").notNullable();
       table.string("due");
       table.string("completion");
       table.string("created");

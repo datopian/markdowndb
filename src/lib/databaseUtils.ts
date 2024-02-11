@@ -1,10 +1,10 @@
 import { Knex } from "knex";
-import { MddbFile, MddbTag, MddbLink, MddbFileTag, File } from "./schema.js";
+import { MddbFile, MddbTag, MddbTask, MddbLink, MddbFileTag, File } from "./schema.js";
 import path from "path";
 import { WikiLink } from "./parseFile.js";
 
 export async function resetDatabaseTables(db: Knex) {
-  const tableNames = [MddbTag, MddbFileTag, MddbLink];
+  const tableNames = [MddbTag, MddbFileTag, MddbLink, MddbTask];
   // Drop and Create tables
   for (const table of tableNames) {
     await table.deleteTable(db);
@@ -80,4 +80,20 @@ export function getUniqueProperties(objects: any[]): string[] {
   }
 
   return uniqueProperties;
+}
+
+export function mapTasksToInsert(file: any) {
+  return file.tasks.map((task: any) => {
+    return {
+      file: file._id,
+      description: task.description,
+      checked: task.checked,
+      metadata: JSON.stringify(task.metadata),
+      created: task.created,
+      due: task.due,
+      completion: task.completion,
+      start: task.start,
+      scheduled: task.scheduled,
+    };
+  });
 }

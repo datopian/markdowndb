@@ -74,5 +74,7 @@ export function processFile(
     customFieldFunction(fileInfo, ast);
   }
 
+  fileInfo.tasks = metadata?.tasks || [];
+
   return fileInfo;
 }
