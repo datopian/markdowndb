@@ -1,5 +1,11 @@
 # mddb
 
+## 0.9.5
+
+### Patch Changes
+
+- [`9dd870c`](https://github.com/datopian/markdowndb/commit/9dd870c5a82339ed5fd4e082f727bf3c96dc57ba) Thanks [@mohamedsalem401](https://github.com/mohamedsalem401)! - Add inline tasks extraction to tasks
+
 ## 0.9.4
 
 ### Patch Changes
