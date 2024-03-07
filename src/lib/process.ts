@@ -2,13 +2,14 @@ import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 
-import { File } from "./schema.js";
+import { File, Task } from "./schema.js";
 import { WikiLink, parseFile } from "./parseFile.js";
 import { Root } from "remark-parse/lib/index.js";
 
 export interface FileInfo extends File {
   tags: string[];
   links: WikiLink[];
+  tasks: Task[];
 }
 
 // this file is an extraction of the file info parsing from markdowndb.ts without any sql stuff
@@ -39,6 +40,7 @@ export function processFile(
     metadata: {},
     tags: [],
     links: [],
+    tasks: [],
   };
 
   // if not a file type we can parse exit here ...
@@ -71,6 +73,8 @@ export function processFile(
     const customFieldFunction = computedFields[index];
     customFieldFunction(fileInfo, ast);
   }
+
+  fileInfo.tasks = metadata?.tasks || [];
 
   return fileInfo;
 }

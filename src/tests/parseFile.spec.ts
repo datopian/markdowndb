@@ -51,8 +51,26 @@ describe("parseFile", () => {
         "Tag_avec_éèç-_öäüßñ",
       ],
       tasks: [
-        { description: "uncompleted task", checked: false },
-        { description: "completed task", checked: true },
+        { 
+          description: "uncompleted task", 
+          checked: false, 
+          metadata: {},
+          created: null,
+          due: null,
+          completion: null,
+          start: null,
+          scheduled: null,
+        },
+        { 
+          description: "completed task", 
+          checked: true, 
+          metadata: {},
+          created: null,
+          due: null,
+          completion: null,
+          start: null,
+          scheduled: null,
+        },
       ],
     };
     const expectedLinks = [
@@ -111,8 +129,26 @@ describe("parseFile", () => {
         "Tag_avec_éèç-_öäüßñ",
       ],
       tasks: [
-        { description: "uncompleted task", checked: false },
-        { description: "completed task", checked: true },
+        { 
+          description: "uncompleted task", 
+          checked: false, 
+          metadata: {},
+          created: null,
+          due: null,
+          completion: null,
+          start: null,
+          scheduled: null,
+      },
+        { 
+          description: "completed task", 
+          checked: true, 
+          metadata: {},
+          created: null,
+          due: null,
+          completion: null,
+          start: null,
+          scheduled: null,
+        },
       ],
     };
     const expectedLinks = [
@@ -158,5 +194,31 @@ describe("parseFile", () => {
     const { metadata, links } = parseFile(source, { permalinks });
     expect(metadata).toEqual(expectedMetadata);
     expect(links).toEqual(expectedLinks);
+  });
+});
+import { extractAllTaskMetadata } from "../lib/parseFile";
+
+describe("extractAllTaskMetadata", () => {
+  it("should extract metadata fields from the description", () => {
+    const description = "[field1:: value1] [field2:: value2] [field3:: value3] #tag1 [due:: 2030-12-31] [created:: 2024-01-01 ] [completion:: ] [start:: ] [scheduled:: ] #tag2";
+    const expectedMetadata = {
+      due: "2030-12-31",
+      field1: "value1",
+      field2: "value2",
+      field3: "value3",
+      created: "2024-01-01",
+      completion: "",
+      start: "",
+      scheduled: "",
+      tags: ["tag1", "tag2"],
+    };
+    const metadata = extractAllTaskMetadata(description);
+    expect(metadata).toEqual(expectedMetadata);
+  });
+
+  it("should return an empty map if no metadata fields are found", () => {
+    const description = "This is a task description without any metadata";
+    const metadata = extractAllTaskMetadata(description);
+    expect(metadata).toEqual({});
   });
 });
