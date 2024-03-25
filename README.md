@@ -62,6 +62,14 @@ Use the npm `mddb` package to index Markdown files into an SQLite database. This
 npx mddb ./blog
 ```
 
+### Watching for Changes
+
+To monitor files for changes and update the database accordingly, simply add the `--watch` flag to the command:
+```bash
+npx mddb ./blog --watch
+```
+This command will continuously watch for any modifications in the specified folder (`./blog`), automatically rebuilding the database whenever a change is detected.
+
 ### Query your files with SQL...
 
 E.g. get all the files with with tag `a`.
