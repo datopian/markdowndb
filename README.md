@@ -348,3 +348,14 @@ jsobj --convert to sql--> sqlite[SQLite markdown.db]
 jsobj --write to disk--> json[JSON on disk in .markdowndb folder]
 jsobj --tests--> testoutput[Test results]
 ```
+
+## Related Efforts
+
+Some related efforts:
+
+- https://github.com/sdorra/content-collections ⭐345 as of 2024-07-28
+- https://github.com/zce/velite ➕2024-06-27 ⭐327
+
+![image](https://github.com/datopian/markdowndb/assets/180658/5d94b5a2-163c-4b67-b9d7-78f1d246829d)
+
+![image](https://github.com/user-attachments/assets/88308e18-2426-4b8b-abe0-d7394de7e5a4)
