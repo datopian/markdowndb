@@ -93,6 +93,7 @@ export function mapTasksToInsert(file: any) {
       due: task.due,
       completion: task.completion,
       start: task.start,
+      list: task.list,
       scheduled: task.scheduled,
     };
   });

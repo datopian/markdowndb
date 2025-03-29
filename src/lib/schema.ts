@@ -317,6 +317,7 @@ interface Task {
   created: string;
   start: string | null;
   scheduled: string | null;
+  list: string | null;
   metadata: MetaData | null;
 
 }
@@ -330,6 +331,7 @@ class MddbTask {
   created: string;
   start: string | null;
   scheduled: string | null;
+  list: string | null;
   metadata: MetaData | null;
 
   constructor(task: Task) {
@@ -340,6 +342,7 @@ class MddbTask {
     this.created = task.created;
     this.start = task.start;
     this.scheduled = task.scheduled;
+    this.list = task.list;
     this.metadata = task.metadata;
   }
 
@@ -353,6 +356,7 @@ class MddbTask {
       table.string("created");
       table.string("start");
       table.string("scheduled");
+      table.string("list");
       table.string("metadata");
     };
     const tableExists = await db.schema.hasTable(this.table);

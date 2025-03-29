@@ -52,6 +52,7 @@ describe("Can parse a file and get file info", () => {
           completion: null,
           start: null,
           scheduled: null,
+          list: null,
         },
         {
           checked: true,
@@ -62,6 +63,7 @@ describe("Can parse a file and get file info", () => {
           completion: null,
           start: null,
           scheduled: null,
+          list: null,
         },
         {
           checked: true,
@@ -72,6 +74,7 @@ describe("Can parse a file and get file info", () => {
           completion: null,
           start: null,
           scheduled: null,
+          list: null,
         },
       ],
     });
