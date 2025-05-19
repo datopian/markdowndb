@@ -60,6 +60,7 @@ describe("parseFile", () => {
           completion: null,
           start: null,
           scheduled: null,
+          list: null,
         },
         { 
           description: "completed task", 
@@ -70,6 +71,7 @@ describe("parseFile", () => {
           completion: null,
           start: null,
           scheduled: null,
+          list: null,
         },
       ],
     };
@@ -138,6 +140,7 @@ describe("parseFile", () => {
           completion: null,
           start: null,
           scheduled: null,
+          list: null,
       },
         { 
           description: "completed task", 
@@ -148,6 +151,7 @@ describe("parseFile", () => {
           completion: null,
           start: null,
           scheduled: null,
+          list: null,
         },
       ],
     };

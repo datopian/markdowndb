@@ -26,7 +26,7 @@ export function parseFile(source: string, options?: ParsingOptions) {
   const links = extractWikiLinks(ast, options);
   metadata.tags = Array.from(new Set(metadata.tags));
 
-  const tasks = extractTasks(ast);
+  const tasks = extractTasks(ast, metadata);
   metadata.tasks = tasks;
 
   return {
@@ -190,9 +190,11 @@ export const extractWikiLinks = (ast: Root, options?: ParsingOptions) => {
   return wikiLinks;
 };
 
-export const extractTasks = (ast: Root) => {
+export const extractTasks = (ast: Root, metadata: { [key: string]: any }) => {
   const nodes = selectAll("*", ast);
   const tasks: Task[] = [];
+  const isKanban = metadata["kanban-list"] === "board";
+  let list: string | null = null;
   nodes.map((node: any) => {
     if (node.type === "listItem") {
       const description = recursivelyExtractText(node).trim();
@@ -213,8 +215,13 @@ export const extractTasks = (ast: Root) => {
           completion,
           scheduled,
           start,
+          list,
           metadata: metadata,
         });
+      }
+    } else if (isKanban && node.type === "heading") {
+      if (node.depth == 2) {
+        list = node.children[0]?.value || null;
       }
     }
   });

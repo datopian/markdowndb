@@ -1,8 +1,10 @@
+import matter from "gray-matter";
 import { extractTasks, processAST } from "../lib/parseFile";
 
 const getTasksFromSource = (source: string) => {
   const ast = processAST(source, {});
-  const tasks = extractTasks(ast);
+  const { data: metadata } = matter(source);
+  const tasks = extractTasks(ast, metadata);
   return tasks;
 };
 
@@ -18,7 +20,8 @@ describe("extractTasks", () => {
       due: null,
       completion: null,
       start: null,
-      scheduled: null,  },
+      scheduled: null,
+      list: null,  },
     ];
     expect(tasks).toEqual(expectedTasks);
   });
@@ -33,13 +36,15 @@ describe("extractTasks", () => {
       due: null,
       completion: null,
       start: null,
-      scheduled: null,  },
+      scheduled: null,
+      list: null,  },
       { description: "completed task 2", checked: true, metadata: {}, 
       created: null,
       due: null,
       completion: null,
       start: null,
-      scheduled: null,  },
+      scheduled: null,
+      list: null,  },
     ];
     expect(tasks).toEqual(expectedTasks);
   });
@@ -54,13 +59,15 @@ describe("extractTasks", () => {
       due: null,
       completion: null,
       start: null,
-      scheduled: null,  },
+      scheduled: null,
+      list: null,  },
       { description: "uncompleted task", checked: false, metadata: {}, 
       created: null,
       due: null,
       completion: null,
       start: null,
-      scheduled: null,  },
+      scheduled: null,
+      list: null,  },
     ];
     expect(tasks).toEqual(expectedTasks);
   });
@@ -75,13 +82,15 @@ describe("extractTasks", () => {
       due: null,
       completion: null,
       start: null,
-      scheduled: null,  },
+      scheduled: null,
+      list: null,  },
       { description: "uncompleted task", checked: false, metadata: {}, 
       created: null,
       due: null,
       completion: null,
       start: null,
-      scheduled: null,  },
+      scheduled: null,
+      list: null,  },
     ];
     expect(tasks).toEqual(expectedTasks);
   });
@@ -96,19 +105,22 @@ describe("extractTasks", () => {
       due: null,
       completion: null,
       start: null,
-      scheduled: null, },
+      scheduled: null,
+      list: null, },
       { description: "task 2", checked: true, metadata: {}, 
       created: null,
       due: null,
       completion: null,
       start: null,
-      scheduled: null,  },
+      scheduled: null,
+      list: null,  },
       { description: "task 3", checked: false, metadata: {}, 
       created: null,
       due: null,
       completion: null,
       start: null,
-      scheduled: null,  },
+      scheduled: null,
+      list: null,  },
     ];
     expect(tasks).toEqual(expectedTasks);
   });
@@ -125,6 +137,7 @@ describe("extractTasks", () => {
         completion: null,
         start: null,
         scheduled: null, 
+        list: null,
       },
     ];
     expect(tasks).toEqual(expectedTasks);
@@ -143,9 +156,29 @@ describe("extractTasks", () => {
         completion: null,
         start: null,
         scheduled: null,
-      
+        list: null,
       },
     ];
     expect(tasks).toEqual(expectedTasks);
+  });
+  test("should extract tasks with kanban list names from body", () => {
+    const body = "## Ideas\n\n- [ ] task 1\n- [ ] task 2\n## Doing\n\n- [ ] task 3\n- [ ] task 4\n## Done\n\n- [x] task 5";
+    const kanbanMetadata = "---\nkanban-list: board\n---\n";
+    const tasksInNonKanban = getTasksFromSource(body);
+    const tasksInKanban = getTasksFromSource(kanbanMetadata + body);
+    expect(tasksInNonKanban).toEqual([
+      { description: "task 1", checked: false, metadata: {}, created: null, due: null, completion: null, start: null, scheduled: null, list: null },
+      { description: "task 2", checked: false, metadata: {}, created: null, due: null, completion: null, start: null, scheduled: null, list: null },
+      { description: "task 3", checked: false, metadata: {}, created: null, due: null, completion: null, start: null, scheduled: null, list: null },
+      { description: "task 4", checked: false, metadata: {}, created: null, due: null, completion: null, start: null, scheduled: null, list: null },
+      { description: "task 5", checked: true, metadata: {}, created: null, due: null, completion: null, start: null, scheduled: null, list: null },
+    ]);
+    expect(tasksInKanban).toEqual([
+      { description: "task 1", checked: false, metadata: {}, created: null, due: null, completion: null, start: null, scheduled: null, list: "Ideas" },
+      { description: "task 2", checked: false, metadata: {}, created: null, due: null, completion: null, start: null, scheduled: null, list: "Ideas" },
+      { description: "task 3", checked: false, metadata: {}, created: null, due: null, completion: null, start: null, scheduled: null, list: "Doing" },
+      { description: "task 4", checked: false, metadata: {}, created: null, due: null, completion: null, start: null, scheduled: null, list: "Doing" },
+      { description: "task 5", checked: true, metadata: {}, created: null, due: null, completion: null, start: null, scheduled: null, list: "Done" },
+    ]);
   });
 });
