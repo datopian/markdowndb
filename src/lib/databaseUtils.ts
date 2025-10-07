@@ -39,10 +39,23 @@ function findFileToInsert(filesToInsert: File[], filePath: string) {
     path.basename(filePath, path.extname(filePath))
   );
 
-  return filesToInsert.find(({ url_path }) => {
+  // First try exact path match
+  let found = filesToInsert.find(({ url_path }) => {
     const normalizedFile = path.normalize(url_path || "");
     return normalizedFile === filePathWithoutExt;
   });
+
+  // If no exact match, try matching by filename only (Obsidian-style wikilinks)
+  if (!found) {
+    const targetBasename = path.basename(filePathWithoutExt);
+    found = filesToInsert.find(({ url_path }) => {
+      const normalizedFile = path.normalize(url_path || "");
+      const fileBasename = path.basename(normalizedFile);
+      return fileBasename === targetBasename;
+    });
+  }
+
+  return found;
 }
 
 export function isLinkToDefined(link: any) {
